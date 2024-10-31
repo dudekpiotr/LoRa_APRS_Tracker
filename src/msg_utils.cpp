@@ -37,7 +37,7 @@ extern APRSPacket           lastReceivedPacket;
 
 extern bool                 SleepModeActive;
 
-String  lastMessageSaved        = "";
+String  lastMessageSaved        = emptyString;
 int     numAPRSMessages         = 0;
 int     numWLNKMessages         = 0;
 bool    noAPRSMsgWarning        = false;
@@ -51,8 +51,8 @@ std::vector<String>             outputAckRequestBuffer;
 std::vector<String>             packet25SegBuffer;
 
 bool        ackRequestState     = false;
-String      ackCallsignRequest  = "";
-String      ackNumberRequest    = "";
+String      ackCallsignRequest  = emptyString;
+String      ackNumberRequest    = emptyString;
 uint32_t    lastMsgRxTime       = millis();
 uint32_t    lastRetryTime       = millis();
 
@@ -61,6 +61,11 @@ uint32_t    messageLedTime      = millis();
 
 
 namespace MSG_Utils {
+
+    const String aprsMessagesFile =  "/aprsMessages.txt";
+    const String winLinkMailsFile =  "/winlinkMails.txt";
+    const String ackString =  "ack";
+    const String commaSeparatorString =  ",";
 
     bool warnNoAPRSMessages() {
         return noAPRSMsgWarning;
@@ -88,7 +93,7 @@ namespace MSG_Utils {
             return;
         }
 
-        File fileToReadAPRS = SPIFFS.open("/aprsMessages.txt");
+        File fileToReadAPRS = SPIFFS.open(aprsMessagesFile);
         if(!fileToReadAPRS) {
             Serial.println("Failed to open APRS_Msg for reading");
             return;
@@ -106,7 +111,7 @@ namespace MSG_Utils {
         }
         logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "Main", "Number of APRS Messages : %s", String(numAPRSMessages));
     
-        File fileToReadWLNK = SPIFFS.open("/winlinkMails.txt");
+        File fileToReadWLNK = SPIFFS.open(winLinkMailsFile);
         if(!fileToReadWLNK) {
             Serial.println("Failed to open Winlink_Msg for reading");
             return;
@@ -133,10 +138,10 @@ namespace MSG_Utils {
                 noAPRSMsgWarning = true;
             } else {
                 loadedAPRSMessages.clear();
-                fileToRead = SPIFFS.open("/aprsMessages.txt");
+                fileToRead = SPIFFS.open(aprsMessagesFile);
             }
             if (noAPRSMsgWarning) {
-                displayShow("___INFO___", "", " NO APRS MSG SAVED", 1500);
+                displayShow("___INFO___", emptyString, " NO APRS MSG SAVED", 1500);
             } else {
                 if(!fileToRead) {
                     Serial.println("Failed to open file for reading");
@@ -153,10 +158,10 @@ namespace MSG_Utils {
                 noWLNKMsgWarning = true;
             } else {
                 loadedWLNKMails.clear();
-                fileToRead = SPIFFS.open("/winlinkMails.txt");
+                fileToRead = SPIFFS.open(winLinkMailsFile);
             }
             if (noWLNKMsgWarning) {
-                displayShow("___INFO___", "", " NO WLNK MAILS SAVED", 1500);
+                displayShow("___INFO___", emptyString, " NO WLNK MAILS SAVED", 1500);
             } else {
                 if(!fileToRead) {
                     Serial.println("Failed to open file for reading");
@@ -191,9 +196,9 @@ namespace MSG_Utils {
             return;
         }
         if (typeOfFile == 0) {  //APRS
-            SPIFFS.remove("/aprsMessages.txt");
+            SPIFFS.remove(aprsMessagesFile);
         } else if (typeOfFile == 1) {   //WLNK
-            SPIFFS.remove("/winlinkMails.txt");
+            SPIFFS.remove(winLinkMailsFile);
         }    
         if (Config.notification.ledMessage) {
             messageLed = false;
@@ -203,13 +208,13 @@ namespace MSG_Utils {
     void saveNewMessage(uint8_t typeMessage, const String& station, const String& newMessage) {
         String message = newMessage;
         if (typeMessage == 0 && lastMessageSaved != message) {   //APRS
-            File fileToAppendAPRS = SPIFFS.open("/aprsMessages.txt", FILE_APPEND);
+            File fileToAppendAPRS = SPIFFS.open(aprsMessagesFile, FILE_APPEND);
             if(!fileToAppendAPRS) {
                 Serial.println("There was an error opening the file for appending");
                 return;
             }
             message.trim();
-            if(!fileToAppendAPRS.println(station + "," + message)) {
+            if(!fileToAppendAPRS.println(station + commaSeparatorString + message)) {
                 Serial.println("File append failed");
             }
             lastMessageSaved = message;
@@ -219,7 +224,7 @@ namespace MSG_Utils {
                 messageLed = true;
             }
         } else if (typeMessage == 1 && lastMessageSaved != message) {    //WLNK
-            File fileToAppendWLNK = SPIFFS.open("/winlinkMails.txt", FILE_APPEND);
+            File fileToAppendWLNK = SPIFFS.open(winLinkMailsFile, FILE_APPEND);
             if(!fileToAppendWLNK) {
                 Serial.println("There was an error opening the file for appending");
                 return;
@@ -242,17 +247,17 @@ namespace MSG_Utils {
         #if HAS_TFT
         cleanTFT();
         #endif
-        if (textMessage.indexOf("ack") == 0 && station != "WLNK-1") {  // don't show Winlink ACK
-            displayShow("<<ACK Tx>>", "", "", 500);
+        if (textMessage.indexOf(ackString) == 0 && station != "WLNK-1") {  // don't show Winlink ACK
+            displayShow("<<ACK Tx>>", emptyString, emptyString, 500);
         } else if (station.indexOf("CA2RXU-15") == 0 && textMessage.indexOf("wrl") == 0) {
-            displayShow("<WEATHER>","", "--- Sending Query ---",  1000);
+            displayShow("<WEATHER>",emptyString, "--- Sending Query ---",  1000);
             wxRequestTime = millis();
             wxRequestStatus = true;
         } else {
             if (station == "WLNK-1") {
-                displayShow("WINLINK Tx", "", newPacket, 100);
+                displayShow("WINLINK Tx", emptyString, newPacket, 100);
             } else {
-                displayShow("MSG Tx >>", "", newPacket, 100);
+                displayShow("MSG Tx >>", emptyString, newPacket, 100);
             }
         }
         LoRa_Utils::sendNewPacket(newPacket);
@@ -272,32 +277,32 @@ namespace MSG_Utils {
             alreadyInBuffer = false;
             if (!outputMessagesBuffer.empty()) {
                 for (int i = 0; i < outputMessagesBuffer.size(); i++) {
-                    if (outputMessagesBuffer[i].indexOf(station + "," + textMessage) == 0) {
+                    if (outputMessagesBuffer[i].indexOf(station + commaSeparatorString + textMessage) == 0) {
                         alreadyInBuffer = true;
                     }
                 }
             }
             if (!outputAckRequestBuffer.empty()) {
                 for (int j = 0; j < outputAckRequestBuffer.size(); j++) {
-                    if (outputAckRequestBuffer[j].indexOf(station + "," + textMessage) > 1) {
+                    if (outputAckRequestBuffer[j].indexOf(station + commaSeparatorString + textMessage) > 1) {
                         alreadyInBuffer = true;
                     }
                 }
             }               
             if (!alreadyInBuffer) {
-                outputMessagesBuffer.push_back(station + "," + textMessage + "{" + ackRequestNumberGenerator());
+                outputMessagesBuffer.push_back(station + commaSeparatorString + textMessage + "{" + ackRequestNumberGenerator());
             }
         } else if (typeOfMessage == 0) {
             alreadyInBuffer = false;
             if (!outputMessagesBuffer.empty()) {
                 for (int k = 0; k < outputMessagesBuffer.size(); k++) {
-                    if (outputMessagesBuffer[k].indexOf(station + "," + textMessage) == 0) {
+                    if (outputMessagesBuffer[k].indexOf(station + commaSeparatorString + textMessage) == 0) {
                         alreadyInBuffer = true;
                     }
                 }
             }
             if (!alreadyInBuffer) {
-                outputMessagesBuffer.push_back(station + "," + textMessage);
+                outputMessagesBuffer.push_back(station + commaSeparatorString + textMessage);
             }
         }
     }
@@ -311,10 +316,10 @@ namespace MSG_Utils {
 
     void processOutputBuffer() {
         if (!outputMessagesBuffer.empty() && (millis() - lastMsgRxTime) >= 6000 && (millis() - lastTxTime) > 3000) {
-            String addressee = outputMessagesBuffer[0].substring(0, outputMessagesBuffer[0].indexOf(","));
-            String message = outputMessagesBuffer[0].substring(outputMessagesBuffer[0].indexOf(",") + 1);
+            String addressee = outputMessagesBuffer[0].substring(0, outputMessagesBuffer[0].indexOf(commaSeparatorString));
+            String message = outputMessagesBuffer[0].substring(outputMessagesBuffer[0].indexOf(commaSeparatorString) + 1);
             if (message.indexOf("{") > 0) {     // message with ack Request
-                outputAckRequestBuffer.push_back("6," + addressee + "," + message);  // 6 is for ack packets retries
+                outputAckRequestBuffer.push_back("6," + addressee + commaSeparatorString + message);  // 6 is for ack packets retries
                 outputMessagesBuffer.erase(outputMessagesBuffer.begin());
             } else {                            // message without ack Request
                 sendMessage(addressee, message);
@@ -326,7 +331,7 @@ namespace MSG_Utils {
             ackRequestState = false;
         } else if (!outputAckRequestBuffer.empty() && (millis() - lastMsgRxTime) >= 4500 && (millis() - lastTxTime) > 3000) {
             bool sendRetry = false;
-            String triesLeft = outputAckRequestBuffer[0].substring(0 , outputAckRequestBuffer[0].indexOf(","));
+            String triesLeft = outputAckRequestBuffer[0].substring(0 , outputAckRequestBuffer[0].indexOf(commaSeparatorString));
             switch (triesLeft.toInt()) {
                 case 6:
                     sendRetry = true;
@@ -358,21 +363,21 @@ namespace MSG_Utils {
                     break;
             }
             if (sendRetry) {
-                String rest = outputAckRequestBuffer[0].substring(outputAckRequestBuffer[0].indexOf(",") + 1);
-                ackCallsignRequest = rest.substring(0, rest.indexOf(","));
-                String payload = rest.substring(rest.indexOf(",") + 1);
+                String rest = outputAckRequestBuffer[0].substring(outputAckRequestBuffer[0].indexOf(commaSeparatorString) + 1);
+                ackCallsignRequest = rest.substring(0, rest.indexOf(commaSeparatorString));
+                String payload = rest.substring(rest.indexOf(commaSeparatorString) + 1);
                 ackNumberRequest = payload.substring(payload.indexOf("{") + 1);                
                 sendMessage(ackCallsignRequest, payload);
                 lastTxTime = millis();
                 lastRetryTime = millis();
-                outputAckRequestBuffer[0] = String(triesLeft.toInt() - 1) + "," + ackCallsignRequest + "," + payload;
+                outputAckRequestBuffer[0] = String(triesLeft.toInt() - 1) + commaSeparatorString + ackCallsignRequest + commaSeparatorString + payload;
             }
         }
     }
 
     void clean25SegBuffer() {
         if (!packet25SegBuffer.empty()) {
-            String deltaTimeString = packet25SegBuffer[0].substring(0, packet25SegBuffer[0].indexOf(","));
+            String deltaTimeString = packet25SegBuffer[0].substring(0, packet25SegBuffer[0].indexOf(commaSeparatorString));
             uint32_t deltaTime = deltaTimeString.toInt();
             if ((millis() - deltaTime) >  25 * 1000) {
                 packet25SegBuffer.erase(packet25SegBuffer.begin());
@@ -384,9 +389,9 @@ namespace MSG_Utils {
         if (!packet25SegBuffer.empty()) {
             bool shouldBeIgnored = false;
             for (int i = 0; i < packet25SegBuffer.size(); i++) {
-                String temp = packet25SegBuffer[i].substring(packet25SegBuffer[i].indexOf(",") + 1);
-                String bufferStation = temp.substring(0, temp.indexOf(","));
-                String bufferMessage = temp.substring(temp.indexOf(",") + 1);
+                String temp = packet25SegBuffer[i].substring(packet25SegBuffer[i].indexOf(commaSeparatorString) + 1);
+                String bufferStation = temp.substring(0, temp.indexOf(commaSeparatorString));
+                String bufferMessage = temp.substring(temp.indexOf(commaSeparatorString) + 1);
                 if (bufferStation == station && bufferMessage == textMessage) {
                     shouldBeIgnored = true;
                 }
@@ -394,11 +399,11 @@ namespace MSG_Utils {
             if (shouldBeIgnored) {
                 return false;
             } else {
-                packet25SegBuffer.push_back(String(millis()) + "," + station + "," + textMessage);
+                packet25SegBuffer.push_back(String(millis()) + commaSeparatorString + station + commaSeparatorString + textMessage);
                 return true;
             }
         } else {
-            packet25SegBuffer.push_back(String(millis()) + "," + station + "," + textMessage);
+            packet25SegBuffer.push_back(String(millis()) + commaSeparatorString + station + commaSeparatorString + textMessage);
             return true;
         }
     }
@@ -438,14 +443,14 @@ namespace MSG_Utils {
 
                     if (lastReceivedPacket.type == 1 && lastReceivedPacket.addressee == currentBeacon->callsign) {
 
-                        if (ackRequestState && lastReceivedPacket.message.indexOf("ack") == 0) {
-                            if (ackCallsignRequest == lastReceivedPacket.sender && ackNumberRequest == lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf("ack") + 3)) {
+                        if (ackRequestState && lastReceivedPacket.message.indexOf(ackString) == 0) {
+                            if (ackCallsignRequest == lastReceivedPacket.sender && ackNumberRequest == lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf(ackString) + 3)) {
                                 outputAckRequestBuffer.erase(outputAckRequestBuffer.begin());
                                 ackRequestState = false;
                             }
                         }
                         if (lastReceivedPacket.message.indexOf("{") >= 0) {
-                            MSG_Utils::addToOutputBuffer(0, lastReceivedPacket.sender, "ack" + lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf("{") + 1));
+                            MSG_Utils::addToOutputBuffer(0, lastReceivedPacket.sender, ackString + lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf("{") + 1));
                             lastMsgRxTime = millis();
                             lastReceivedPacket.message = lastReceivedPacket.message.substring(0, lastReceivedPacket.message.indexOf("{"));
                         }
@@ -453,6 +458,7 @@ namespace MSG_Utils {
                         if (Config.notification.buzzerActive && Config.notification.messageRxBeep) {
                             NOTIFICATION_Utils::messageBeep();
                         }
+
                         if (lastReceivedPacket.message.indexOf("ping") == 0 || lastReceivedPacket.message.indexOf("Ping") == 0 || lastReceivedPacket.message.indexOf("PING") == 0) {
                             lastMsgRxTime = millis();
                             MSG_Utils::addToOutputBuffer(0, lastReceivedPacket.sender, "pong, 73!");
@@ -461,19 +467,19 @@ namespace MSG_Utils {
                         if (lastReceivedPacket.sender == "CA2RXU-15" && lastReceivedPacket.message.indexOf("WX") == 0) {    // WX = WeatherReport
                             Serial.println("Weather Report Received");
                             const String& wxCleaning     = lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf("WX ") + 3);
-                            const String& place          = wxCleaning.substring(0,wxCleaning.indexOf(","));
-                            const String& placeCleaning  = wxCleaning.substring(wxCleaning.indexOf(",")+1);
-                            const String& summary        = placeCleaning.substring(0,placeCleaning.indexOf(","));
-                            const String& sumCleaning    = placeCleaning.substring(placeCleaning.indexOf(",")+2);
-                            const String& temperature    = sumCleaning.substring(0,sumCleaning.indexOf("P"));
-                            const String& tempCleaning   = sumCleaning.substring(sumCleaning.indexOf("P")+1);
-                            const String& pressure       = tempCleaning.substring(0,tempCleaning.indexOf("H"));
-                            const String& presCleaning   = tempCleaning.substring(tempCleaning.indexOf("H")+1);
-                            const String& humidity       = presCleaning.substring(0,presCleaning.indexOf("W"));
-                            const String& humCleaning    = presCleaning.substring(presCleaning.indexOf("W")+1);
-                            const String& windSpeed      = humCleaning.substring(0,humCleaning.indexOf(","));
-                            const String& windCleaning   = humCleaning.substring(humCleaning.indexOf(",")+1);
-                            const String& windDegrees    = windCleaning.substring(windCleaning.indexOf(",")+1,windCleaning.indexOf("\n"));
+                            const String& place          = wxCleaning.substring(0, wxCleaning.indexOf(commaSeparatorString));
+                            const String& placeCleaning  = wxCleaning.substring(wxCleaning.indexOf(commaSeparatorString) + 1);
+                            const String& summary        = placeCleaning.substring(0, placeCleaning.indexOf(commaSeparatorString));
+                            const String& sumCleaning    = placeCleaning.substring(placeCleaning.indexOf(commaSeparatorString) + 2);
+                            const String& temperature    = sumCleaning.substring(0, sumCleaning.indexOf("P"));
+                            const String& tempCleaning   = sumCleaning.substring(sumCleaning.indexOf("P") + 1);
+                            const String& pressure       = tempCleaning.substring(0, tempCleaning.indexOf("H"));
+                            const String& presCleaning   = tempCleaning.substring(tempCleaning.indexOf("H") + 1);
+                            const String& humidity       = presCleaning.substring(0, presCleaning.indexOf("W"));
+                            const String& humCleaning    = presCleaning.substring(presCleaning.indexOf("W") + 1);
+                            const String& windSpeed      = humCleaning.substring(0, humCleaning.indexOf(commaSeparatorString));
+                            const String& windCleaning   = humCleaning.substring(humCleaning.indexOf(commaSeparatorString) + 1);
+                            const String& windDegrees    = windCleaning.substring(windCleaning.indexOf(commaSeparatorString) + 1, windCleaning.indexOf("\n"));
 
                             String fifthLineWR = temperature;
                             fifthLineWR += "C  ";
@@ -494,39 +500,42 @@ namespace MSG_Utils {
                         } else if (lastReceivedPacket.sender == "WLNK-1") {
                             if (winlinkStatus == 0 && !Config.simplifiedTrackerMode) {
                                 lastMsgRxTime = millis();
-                                if (lastReceivedPacket.message.indexOf("ack") != 0) {
+                                if (lastReceivedPacket.message.indexOf(ackString) != 0) {
                                     saveNewMessage(0, lastReceivedPacket.sender, lastReceivedPacket.message);
                                 }                                    
-                            } else if (winlinkStatus == 1 && ackNumberRequest == lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf("ack") + 3)) {
-                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "Winlink","---> Waiting Challenge");
+                            } else if (winlinkStatus == 1 && ackNumberRequest == lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf(ackString) + 3)) {
+                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "Winlink", "---> Waiting Challenge");
                                 lastMsgRxTime = millis();
                                 winlinkStatus = 2;
                                 menuDisplay = 500;
-                            } else if ((winlinkStatus >= 1 || winlinkStatus <= 3) &&lastReceivedPacket.message.indexOf("Login [") == 0) {
+                            } else if ((winlinkStatus >= 1 || winlinkStatus <= 3) && lastReceivedPacket.message.indexOf("Login [") == 0) {
                                 WINLINK_Utils::processWinlinkChallenge(lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf("[")+1,lastReceivedPacket.message.indexOf("]")));
-                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink","---> Challenge Received/Processed/Sended");
+                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink", "---> Challenge Received/Processed/Sended");
                                 lastMsgRxTime = millis();
                                 winlinkStatus = 3;
                                 menuDisplay = 501;
-                            } else if (winlinkStatus == 3 && ackNumberRequest == lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf("ack") + 3)) {
-                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "Winlink","---> Challenge Ack Received");
+                            } else if (winlinkStatus == 3 && ackNumberRequest == lastReceivedPacket.message.substring(lastReceivedPacket.message.indexOf(ackString) + 3)) {
+                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "Winlink", "---> Challenge Ack Received");
                                 lastMsgRxTime = millis();
                                 winlinkStatus = 4;
                                 menuDisplay = 502;
                             } else if (lastReceivedPacket.message.indexOf("Login valid for") > 0) {
-                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink","---> Login Succesfull");
+                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink", "---> Login Succesfull");
                                 lastMsgRxTime = millis();
                                 winlinkStatus = 5;
-                                displayShow("_WINLINK_>", "", " LOGGED !!!!", 2000);
+                                displayShow("_WINLINK_>", emptyString, " LOGGED !!!!", 2000);
                                 menuDisplay = 5000;
                             } else if (winlinkStatus == 5 && lastReceivedPacket.message.indexOf("Log off successful") == 0 ) {
-                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink","---> Log Out");
+                                logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink", "---> Log Out");
                                 lastMsgRxTime = millis();
-                                displayShow("_WINLINK_>", "", "    LOG OUT !!!", 2000);
+                                displayShow("_WINLINK_>", emptyString, "    LOG OUT !!!", 2000);
                                 winlinkStatus = 0;
-                            } else if ((winlinkStatus == 5) && (lastReceivedPacket.message.indexOf("Log off successful") == -1) && (lastReceivedPacket.message.indexOf("Login valid") == -1) && (lastReceivedPacket.message.indexOf("Login [") == -1) && (lastReceivedPacket.message.indexOf("ack") == -1)) {
+                            } else if ((winlinkStatus == 5) && (lastReceivedPacket.message.indexOf("Log off successful") == -1) 
+                                        && (lastReceivedPacket.message.indexOf("Login valid") == -1) 
+                                        && (lastReceivedPacket.message.indexOf("Login [") == -1) 
+                                        && (lastReceivedPacket.message.indexOf(ackString) == -1)) {
                                 lastMsgRxTime = millis();
-                                displayShow("<WLNK Rx >", "", lastReceivedPacket.message, 3000);
+                                displayShow("<WLNK Rx >", emptyString, lastReceivedPacket.message, 3000);
                                 saveNewMessage(1, lastReceivedPacket.sender, lastReceivedPacket.message);
                             } 
                         } else {
@@ -536,10 +545,10 @@ namespace MSG_Utils {
                                 #ifdef HAS_TFT
                                     displayMessage(lastReceivedPacket.sender,lastReceivedPacket.message, 26, false, 3000);
                                 #else
-                                    displayShow("< MSG Rx >", "From --> " + lastReceivedPacket.sender, "", lastReceivedPacket.message , "", "", 3000);
+                                    displayShow("< MSG Rx >", "From --> " + lastReceivedPacket.sender, emptyString, lastReceivedPacket.message , emptyString, emptyString, 3000);
                                 #endif
 
-                                if (lastReceivedPacket.message.indexOf("ack") != 0) {
+                                if (lastReceivedPacket.message.indexOf(ackString) != 0) {
                                     saveNewMessage(0, lastReceivedPacket.sender, lastReceivedPacket.message);
                                 }                            
                             }

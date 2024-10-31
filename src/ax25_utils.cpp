@@ -5,7 +5,7 @@ namespace AX25_Utils {
     AX25Frame decodedFrame;
 
     String decodeFrame(const String& frame) {
-        String packet = "";
+        String packet = emptyString;
         for (int a = 0; a < 6; a ++) {
             uint16_t shiftedValue = frame[a] >> 1;
             if (shiftedValue == 32) {
@@ -50,7 +50,7 @@ namespace AX25_Utils {
     String AX25FrameToLoRaPacket(const String& frame) {
         //Serial.println(frame);
         if (decodeAX25(frame, frame.length(), &decodedFrame)) {
-            //String packetToLoRa = "";
+            //String packetToLoRa = emptyString;
             String packetToLoRa = decodeFrame(decodedFrame.sender) + ">" + decodeFrame(decodedFrame.tocall);
 
             if (decodedFrame.path1[0] != 0) {
@@ -65,7 +65,7 @@ namespace AX25_Utils {
             packetToLoRa += decodedFrame.payload;
             return packetToLoRa;
         } else {
-            return "";
+            return emptyString;
         }
     }
 
@@ -103,7 +103,7 @@ namespace AX25_Utils {
             address = frameCleaning(frame);
             ssid = 0;
         }
-        String packet = "";
+        String packet = emptyString;
         for (int j = 0; j < 6; j++) {
             char c = address[j];
             packet += char(c<<1);
@@ -120,8 +120,8 @@ namespace AX25_Utils {
     }
 
     String LoRaPacketToAX25Frame(const String& packet) {
-        //String encodedPacket    = "";
-        //String tocall           = "";
+        //String encodedPacket    = emptyString;
+        //String tocall           = emptyString;
         String  sender      = packet.substring(0, packet.indexOf(">"));
         bool    lastAddress = false;
         //String  payload     = packet.substring(packet.indexOf(":") + 1);
@@ -133,7 +133,7 @@ namespace AX25_Utils {
             temp        = temp.substring(temp.indexOf(",") + 1);
         } else {
             tocall      = temp;
-            temp        = "";
+            temp        = emptyString;
             lastAddress = true;
         }
         String encodedPacket = encodeAX25Address(tocall, 1, false);
@@ -146,7 +146,7 @@ namespace AX25_Utils {
                 temp        = temp.substring(temp.indexOf(",") + 1);
             } else {
                 address     = temp;
-                temp        = "";
+                temp        = emptyString;
                 lastAddress = true;        
             }
             int repeatedPath = 0;

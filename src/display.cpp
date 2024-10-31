@@ -343,11 +343,11 @@ void displayShow(const String& header, const String& line1, const String& line2,
 void startupScreen(uint8_t index, const String& version) {
     String workingFreq = "    LoRa Freq [";
     switch (index) {
-        case 0: workingFreq += "Eu]"; break;
+        case 0: workingFreq += "EU]"; break;
         case 1: workingFreq += "PL]"; break;
         case 2: workingFreq += "UK]"; break;
     }
-    displayShow(" LoRa APRS", "      (TRACKER)", workingFreq, "", "", "  CA2RXU  " + version, 4000);
+    displayShow(" LoRa APRS", "      (TRACKER)", workingFreq, "  CA2RXU  " + version, emptyString, "    Fork by SQ9PD", 5000);
     #ifdef HAS_TFT
         cleanTFT();
     #endif
@@ -380,7 +380,7 @@ void displayMessage(const String& sender, const String& message, const int& line
         String nextLine = fillMessageLine("Next=Down", lineLength);
         displayShow("MSG_APRS>", "From --> " + sender, fillMessageLine(messageLine1, lineLength), fillMessageLine(messageLine2, lineLength), fillMessageLine(messageLine3, lineLength), nextLine);
     } else {
-        displayShow("< MSG Rx >", "From --> " + sender, "", fillMessageLine(messageLine1, lineLength) , fillMessageLine(messageLine2, lineLength), fillMessageLine(messageLine3, lineLength), wait);
+        displayShow("< MSG Rx >", "From --> " + sender, emptyString, fillMessageLine(messageLine1, lineLength) , fillMessageLine(messageLine2, lineLength), fillMessageLine(messageLine3, lineLength), wait);
     }
     
 }

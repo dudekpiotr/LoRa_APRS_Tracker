@@ -30,10 +30,10 @@ String decapsulateKISS(const String &frame);
  */
 
 String encode_kiss(const String &tnc2FormattedFrame) {
-  String ax25Frame = "";
+  String ax25Frame = emptyString;
 
   if (validateTNC2Frame(tnc2FormattedFrame)) {
-    String address = "";
+    String address = emptyString;
     bool dst_addres_written = false;
     for (int p = 0; p <= tnc2FormattedFrame.indexOf(':'); p++) {
       char currentChar = tnc2FormattedFrame.charAt(p);
@@ -46,7 +46,7 @@ String encode_kiss(const String &tnc2FormattedFrame) {
         } else {
           ax25Frame += encode_address_ax25(address);
         }
-        address = "";
+        address = emptyString;
       } else {
         address += currentChar;
       }
@@ -63,7 +63,7 @@ String encode_kiss(const String &tnc2FormattedFrame) {
 }
 
 String encapsulateKISS(const String &ax25Frame, uint8_t TNCCmd) {
-  String kissFrame = "";
+  String kissFrame = emptyString;
   kissFrame += (char) FEND; // start of frame
   kissFrame += (char) (0x0f & TNCCmd); // TNC0, cmd
   for (int i = 0; i < ax25Frame.length(); ++i) {
@@ -84,7 +84,7 @@ String encapsulateKISS(const String &ax25Frame, uint8_t TNCCmd) {
 
 
 String decapsulateKISS(const String &frame) {
-  String ax25Frame = "";
+  String ax25Frame = emptyString;
   for (int i = 2; i < frame.length() - 1; ++i) {
     char currentChar = frame.charAt(i);
     if (currentChar == (char) FESC) {
@@ -110,7 +110,7 @@ String decapsulateKISS(const String &frame) {
  * @return Decapsulated TNC2KISS APRS data frame, or raw command data frame
  */
 String decode_kiss(const String &inputKISSTNCFrame, bool &dataFrame) {
-  String TNC2Frame = "";
+  String TNC2Frame = emptyString;
 
   if (validateKISSFrame(inputKISSTNCFrame)) {
     dataFrame = inputKISSTNCFrame.charAt(1) == CMD_DATA;
@@ -157,7 +157,7 @@ String encode_address_ax25(String tnc2Address) {
   int separatorIndex = tnc2Address.indexOf('-');
   int ssid = tnc2Address.substring(separatorIndex + 1).toInt();
   // TODO: SSID should not be > 16
-  String kissAddress = "";
+  String kissAddress = emptyString;
   for (int i = 0; i < 6; ++i) {
     char addressChar;
     if (tnc2Address.length() > i && i < separatorIndex) {
@@ -177,7 +177,7 @@ String encode_address_ax25(String tnc2Address) {
  * @return
  */
 String decode_address_ax25(const String &ax25Address, bool &isLast, bool isRelay) {
-  String TNCAddress = "";
+  String TNCAddress = emptyString;
   for (int i = 0; i < 6; ++i) {
     uint8_t currentCharacter = ax25Address.charAt(i);
     currentCharacter >>= 1;

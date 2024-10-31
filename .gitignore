@@ -8,3 +8,6 @@
 installer/firmware
 installer/*.bin
 **/__pycache__/
+.vscode
+.pio
+.vscode/settings.json

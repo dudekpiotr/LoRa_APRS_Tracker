@@ -47,7 +47,7 @@ class MyServerCallbacks : public NimBLEServerCallbacks {
 class MyCallbacks : public NimBLECharacteristicCallbacks {
     void onWrite(NimBLECharacteristic *pCharacteristic) {
         std::string receivedData = pCharacteristic->getValue();
-        String receivedString = "";
+        String receivedString = emptyString;
         for (int i = 0; i < receivedData.length(); i++) {
             //Serial.print(receivedData[i],HEX); // delete
             //Serial.print(" ");
@@ -114,9 +114,9 @@ namespace BLE_Utils {
             return;
         }
         logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "BLE Tx", "%s", BLEToLoRaPacket.c_str());
-        displayShow("BLE Tx >>", "", BLEToLoRaPacket, 1000);
+        displayShow("BLE Tx >>", emptyString, BLEToLoRaPacket, 1000);
         LoRa_Utils::sendNewPacket(BLEToLoRaPacket);
-        BLEToLoRaPacket = "";
+        BLEToLoRaPacket = emptyString;
         sendBleToLoRa = false;
     }
 
@@ -157,7 +157,7 @@ namespace BLE_Utils {
     void sendToPhone(const String& packet) {
         if (!packet.isEmpty() && bluetoothConnected) {
             logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "BLE Rx", "%s", packet.c_str());
-            String receivedPacketString = "";
+            String receivedPacketString = emptyString;
             for (int i = 0; i < packet.length(); i++) {
                 receivedPacketString += packet[i];
             }

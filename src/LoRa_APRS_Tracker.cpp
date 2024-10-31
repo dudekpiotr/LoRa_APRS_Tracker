@@ -70,7 +70,7 @@ bool        sendUpdate              = true;
 
 bool        bluetoothConnected      = false;
 bool        sendBleToLoRa           = false;
-String      BLEToLoRaPacket         = "";
+String      BLEToLoRaPacket         = emptyString;
 
 uint32_t    lastTx                  = 0.0;
 uint32_t    txInterval              = 60000L;

@@ -11,11 +11,11 @@ extern      logging::Logger         logger;
 
 uint8_t     winlinkStatus           = 0;
 String      winlinkMailNumber       = "_?";
-String      winlinkAddressee        = "";
-String      winlinkSubject          = "";
-String      winlinkBody             = "";
-String      winlinkAlias            = "";
-String      winlinkAliasComplete    = "";
+String      winlinkAddressee        = emptyString;
+String      winlinkSubject          = emptyString;
+String      winlinkBody             = emptyString;
+String      winlinkAlias            = emptyString;
+String      winlinkAliasComplete    = emptyString;
 bool        winlinkCommentState     = false;
 
 uint32_t    lastChallengeTime       = 0;
@@ -27,12 +27,12 @@ namespace WINLINK_Utils {
 
     void processWinlinkChallenge(const String& winlinkInteger) {
         if (lastChallengeTime == 0 || (millis() - lastChallengeTime) > 10 * 60 * 10000) {
-            challengeAnswer = "";
+            challengeAnswer = emptyString;
             for (int i = 0; i < winlinkInteger.length(); i++) {
                 String number = String(winlinkInteger[i]);
                 int digit = number.toInt();
                 if (digit > Config.winlink.password.length()) {
-                    displayShow("__WINLINK_", "" , "PASS Length<REQUIRED", "", "" , "", 2000);
+                    displayShow("__WINLINK_", emptyString , "PASS Length<REQUIRED", emptyString, emptyString , emptyString, 2000);
                     challengeAnswer += Config.winlink.password[0];
                 } else {
                     challengeAnswer += Config.winlink.password[digit - 1];
@@ -50,7 +50,7 @@ namespace WINLINK_Utils {
 
     void login() {
         logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink","---> Start Login");
-        displayShow("__WINLINK_", "" , "Login Initiation ...", "", "" , "<Back");
+        displayShow("__WINLINK_", emptyString , "Login Initiation ...", emptyString, emptyString , "<Back");
         if (winlinkStatus == 5) {
             menuDisplay = 5000;
         } else {

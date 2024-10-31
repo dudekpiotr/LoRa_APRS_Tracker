@@ -3,7 +3,7 @@
 namespace APRSPacketLib {
 
     String doubleToString(double n, int ndec) {
-        String r = "";
+        String r = emptyString;
         if (n > -1 && n < 0) {
             r = "-";
         }   
@@ -220,7 +220,7 @@ namespace APRSPacketLib {
         String miceAPRSPacket = callsign;
         miceAPRSPacket += ">";
         miceAPRSPacket += miceDestination;
-        if (path != "") {
+        if (path != emptyString) {
             miceAPRSPacket += ",";
             miceAPRSPacket += path;
         }
@@ -486,7 +486,7 @@ namespace APRSPacketLib {
         } else if (informationField.indexOf("}") == 11) {
             temp = informationField.substring(8, 11);
         } else {
-            temp = "";
+            temp = emptyString;
         }
         if (temp.length() != 0) {
             int a = int(temp[0]) - 33;
@@ -602,7 +602,7 @@ namespace APRSPacketLib {
             aprsPacket.header = receivedPacket.substring(receivedPacket.indexOf(":}"));
             temp0 = receivedPacket.substring(receivedPacket.indexOf(":}") + 2);
         } else {
-            aprsPacket.header = "";
+            aprsPacket.header = emptyString;
             temp0 = receivedPacket;
         }
         aprsPacket.sender = temp0.substring(0, temp0.indexOf(">"));
@@ -613,12 +613,12 @@ namespace APRSPacketLib {
             aprsPacket.path     = temp1.substring(temp1.indexOf(",") + 1, temp1.indexOf(":"));
         } else {
             aprsPacket.tocall   = temp1;
-            aprsPacket.path     = "";
+            aprsPacket.path     = emptyString;
         }
 
         if (temp0.indexOf(":!") > 10 || temp0.indexOf(":=") > 10 ) {
             aprsPacket.type = 0;
-            String gpsChar = "";
+            String gpsChar = emptyString;
             if (temp0.indexOf(":!") > 10) {
                 gpsChar = ":!";
             } else {
@@ -696,11 +696,11 @@ namespace APRSPacketLib {
         }
             
         if (aprsPacket.type != 1) {
-            aprsPacket.addressee    = "";
+            aprsPacket.addressee    = emptyString;
         }
         if (aprsPacket.type != 0 && aprsPacket.type != 4) {
-            aprsPacket.symbol       = "";
-            aprsPacket.overlay      = "";
+            aprsPacket.symbol       = emptyString;
+            aprsPacket.overlay      = emptyString;
             aprsPacket.latitude     = 0;
             aprsPacket.longitude    = 0;
             aprsPacket.course       = 0;
@@ -708,7 +708,7 @@ namespace APRSPacketLib {
             aprsPacket.altitude     = 0;
         }    
         if (aprsPacket.type != 4) {
-            aprsPacket.miceType = "";
+            aprsPacket.miceType = emptyString;
         }
         aprsPacket.rssi             = rssi;
         aprsPacket.snr              = snr;

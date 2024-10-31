@@ -47,8 +47,8 @@ bool        disableGPS;
 namespace POWER_Utils {
 
     bool   BatteryIsConnected = false;
-    String batteryVoltage = "";
-    String batteryChargeDischargeCurrent = "";
+    String batteryVoltage = emptyString;
+    String batteryChargeDischargeCurrent = emptyString;
 
     double getBatteryVoltage() {
     #if defined(HAS_AXP192) || defined(HAS_AXP2101)

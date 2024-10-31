@@ -114,10 +114,10 @@ bool Configuration::readFile() {
             bcn.callsign.toUpperCase();
             bcn.symbol                  = BeaconsArray[i]["symbol"] | "[";
             bcn.overlay                 = BeaconsArray[i]["overlay"] | "/";
-            bcn.comment                 = BeaconsArray[i]["comment"] | "";
+            bcn.comment                 = BeaconsArray[i]["comment"] | emptyString;
             bcn.smartBeaconActive       = BeaconsArray[i]["smartBeaconActive"] | true;
             bcn.smartBeaconSetting      = BeaconsArray[i]["smartBeaconSetting"] | 0;
-            bcn.micE                    = BeaconsArray[i]["micE"] | "";
+            bcn.micE                    = BeaconsArray[i]["micE"] | emptyString;
             bcn.gpsEcoMode              = BeaconsArray[i]["gpsEcoMode"] | false;
             
             beacons.push_back(bcn);
@@ -226,10 +226,10 @@ void Configuration::init() {
         beacon.callsign             = "NOCALL-7";
         beacon.symbol               = "[";
         beacon.overlay              = "/";
-        beacon.comment              = "";
+        beacon.comment              = emptyString;
         beacon.smartBeaconActive    = true;
         beacon.smartBeaconSetting   = 0;
-        beacon.micE                 = "";
+        beacon.micE                 = emptyString;
         beacon.gpsEcoMode           = false;
         beacons.push_back(beacon);
     }

@@ -80,7 +80,7 @@ namespace LoRa_Utils {
         currentLoRainfo += String(currentLoRaType->codingRate4);
         
         logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "LoRa", currentLoRainfo.c_str());
-        displayShow("LORA FREQ>", "", "CHANGED TO: " + loraCountryFreq, "", "", "", 2000);
+        displayShow("LORA FREQ>", emptyString, "CHANGED TO: " + loraCountryFreq, emptyString, emptyString, emptyString, 2000);
     }
 
     void setup() {
@@ -190,7 +190,7 @@ namespace LoRa_Utils {
 
     ReceivedLoRaPacket receiveFromSleep() {
         ReceivedLoRaPacket receivedLoraPacket;
-        String packet = "";
+        String packet = emptyString;
         int state = radio.readData(packet);
         if (state == RADIOLIB_ERR_NONE) {
             receivedLoraPacket.text       = packet;
@@ -205,7 +205,7 @@ namespace LoRa_Utils {
 
     ReceivedLoRaPacket receivePacket() {
         ReceivedLoRaPacket receivedLoraPacket;
-        String packet = "";
+        String packet = emptyString;
         if (operationDone) {
             operationDone = false;
             if (transmitFlag) {
