@@ -11,11 +11,11 @@ extern      logging::Logger         logger;
 
 uint8_t     winlinkStatus           = 0;
 String      winlinkMailNumber       = "_?";
-String      winlinkAddressee        = "";
-String      winlinkSubject          = "";
-String      winlinkBody             = "";
-String      winlinkAlias            = "";
-String      winlinkAliasComplete    = "";
+String      winlinkAddressee        = emptyString;
+String      winlinkSubject          = emptyString;
+String      winlinkBody             = emptyString;
+String      winlinkAlias            = emptyString;
+String      winlinkAliasComplete    = emptyString;
 bool        winlinkCommentState     = false;
 
 uint32_t    lastChallengeTime       = 0;
@@ -28,11 +28,11 @@ namespace WINLINK_Utils {
     void processWinlinkChallenge(const String& winlinkInteger) {
         uint32_t currenTime = millis();
         if (lastChallengeTime == 0 || (currenTime - lastChallengeTime) > 10 * 60 * 10000) {
-            challengeAnswer = "";
+            challengeAnswer = emptyString;
             for (char c : winlinkInteger) {
                 int digit = c - '0';                                            // Convert '0'-'9' to 0-9
                 if (digit < 1 || digit > Config.winlink.password.length()) {    // Ensure valid range
-                    displayShow(" WINLINK", "", "PASS Length<REQUIRED", "", "", "", 2000);
+                    displayShow(" WINLINK", emptyString, "PASS Length<REQUIRED", emptyString, emptyString, emptyString, 2000);
                     challengeAnswer += Config.winlink.password[0];
                 } else {
                     challengeAnswer += Config.winlink.password[digit - 1];  // Adjust for 1-based indexing
@@ -48,7 +48,7 @@ namespace WINLINK_Utils {
 
     void login() {
         logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink","---> Start Login");
-        displayShow(" WINLINK", "" , "Login Initiation ...", "", "" , "<Back");
+        displayShow(" WINLINK", emptyString , "Login Initiation ...", emptyString, emptyString , "<Back");
         if (winlinkStatus == 5) {
             menuDisplay = 5000;
         } else {

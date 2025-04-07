@@ -38,7 +38,7 @@ namespace BLUETOOTH_Utils {
 
         if (!SerialBT.begin(String(BTid))) {
             logger.log(logging::LoggerLevel::LOGGER_LEVEL_ERROR, "Bluetooth", "Starting Bluetooth failed!");
-            displayShow("ERROR", "Starting Bluetooth failed!", "");
+            displayShow("ERROR", "Starting Bluetooth failed!", emptyString);
             while(true) {
                 delay(1000);
             }

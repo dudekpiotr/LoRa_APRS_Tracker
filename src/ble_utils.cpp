@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <NimBLEDevice.h>
 #include "configuration.h"
 #include "lora_utils.h"
@@ -30,8 +31,8 @@ extern bool             bluetoothConnected;
 extern bool             bluetoothActive;
 
 bool    shouldSendBLEtoLoRa     = false;
-String  BLEToLoRaPacket         = "";
-String  kissSerialBuffer        = "";
+String  BLEToLoRaPacket         = emptyString;
+String  kissSerialBuffer        = emptyString;
 
 
 class MyServerCallbacks : public NimBLEServerCallbacks {
@@ -125,14 +126,14 @@ namespace BLE_Utils {
         if (!Config.acceptOwnFrameFromTNC && BLEToLoRaPacket.indexOf("::") == -1) {
             String sender = BLEToLoRaPacket.substring(0, BLEToLoRaPacket.indexOf(">"));
             if (sender == currentBeacon->callsign) {
-                BLEToLoRaPacket = "";
+                BLEToLoRaPacket = emptyString;
                 shouldSendBLEtoLoRa = false;
                 return;
             }
         }
 
         logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "BLE Tx", "%s", BLEToLoRaPacket.c_str());
-        displayShow("BLE Tx >>", "", BLEToLoRaPacket, 1000);
+        displayShow("BLE Tx >>", emptyString, BLEToLoRaPacket, 1000);
         LoRa_Utils::sendNewPacket(BLEToLoRaPacket);
         BLEToLoRaPacket = "";
         shouldSendBLEtoLoRa = false;
@@ -170,7 +171,7 @@ namespace BLE_Utils {
     void sendToPhone(const String& packet) {
         if (!packet.isEmpty() && bluetoothConnected) {
             logger.log(logging::LoggerLevel::LOGGER_LEVEL_DEBUG, "BLE Rx", "%s", packet.c_str());
-            String receivedPacketString = "";
+            String receivedPacketString = emptyString;
             for (int i = 0; i < packet.length(); i++) receivedPacketString += packet[i];
             txToPhoneOverBLE(receivedPacketString);
         }

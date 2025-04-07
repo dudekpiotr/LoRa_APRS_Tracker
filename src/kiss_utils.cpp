@@ -14,7 +14,7 @@ namespace KISS_Utils {
     }
 
     String decodeAddressAX25(const String& ax25Address, bool& isLastAddress, bool isRelay) {
-        String address = "";
+        String address = emptyString;
         for (int i = 0; i < 6; ++i) {
             uint8_t currentCharacter = ax25Address.charAt(i);
             currentCharacter >>= 1;
@@ -35,7 +35,7 @@ namespace KISS_Utils {
     }
 
     String decapsulateKISS(const String& frame) {
-        String ax25Frame = "";
+        String ax25Frame = emptyString;
         for (int i = 2; i < frame.length() - 1; ++i) {
             char currentChar = frame.charAt(i);
             if (currentChar == (char)KissChar::FESC) {
@@ -54,7 +54,7 @@ namespace KISS_Utils {
     }
 
     String encapsulateKISS(const String& ax25Frame, uint8_t command) {
-        String kissFrame = "";
+        String kissFrame = emptyString;
         kissFrame += (char)KissChar::FEND;
         kissFrame += (char)(0x0f & command);
 
@@ -83,7 +83,7 @@ namespace KISS_Utils {
 
         int separatorIndex  = address.indexOf('-');
         int ssid            = address.substring(separatorIndex + 1).toInt();
-        String kissAddress  = "";
+        String kissAddress  = emptyString;
         for (int i = 0; i < 6; ++i) {
             char addressChar = ' ';
             if (address.length() > i && i < separatorIndex) addressChar = address.charAt(i);
@@ -94,7 +94,7 @@ namespace KISS_Utils {
     }
 
     String decodeKISS(const String& inputFrame, bool& dataFrame) {
-        String frame = "";
+        String frame = emptyString;
         if (KISS_Utils::validateKISSFrame(inputFrame)) {
             dataFrame = inputFrame.charAt(1) == KissCmd::Data;
             if (dataFrame) {
@@ -121,12 +121,12 @@ namespace KISS_Utils {
     }
 
     String encodeKISS(const String& frame) {
-        String ax25Frame = "";
+        String ax25Frame = emptyString;
 
         if (KISS_Utils::validateTNC2Frame(frame)) {
             int colonIndex = frame.indexOf(':');
 
-            String address = "";
+            String address = emptyString;
             bool destinationAddressWritten = false;
             for (int i = 0; i <= colonIndex; i++) {
                 char currentChar = frame.charAt(i);
@@ -137,7 +137,7 @@ namespace KISS_Utils {
                     } else {
                         ax25Frame += encodeAddressAX25(address);
                     }
-                    address = "";
+                    address = emptyString;
                 } else {
                     address += currentChar;
                 }

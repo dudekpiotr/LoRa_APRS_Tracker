@@ -176,7 +176,7 @@ namespace GPS_Utils {
         if (bearing >= 320.625 && bearing < 331.875)  return ">.......NW|.....N...<";
         if (bearing >= 331.875 && bearing < 343.125)  return ">.....NW..|...N.....<"; // NWN
         if (bearing >= 343.125 && bearing < 354.375)  return ">...NW....|.N.......<";
-        return "";
+        return emptyString;
     }
 
 }

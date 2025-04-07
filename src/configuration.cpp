@@ -248,7 +248,7 @@ void Configuration::init() {
         beacon.comment              = "";
         beacon.smartBeaconActive    = true;
         beacon.smartBeaconSetting   = 0;
-        beacon.micE                 = "";
+        beacon.micE                 = emptyString;
         beacon.gpsEcoMode           = false;
         beacons.push_back(beacon);
     }
@@ -335,7 +335,7 @@ void Configuration::init() {
     sendAltitude                    = true;
     disableGPS                      = false;
     acceptOwnFrameFromTNC           = false;
-    email                           = "";
+    email                           = emptyString;
 
     Serial.println("New Data Created...");
 }

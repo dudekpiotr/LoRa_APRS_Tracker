@@ -54,11 +54,11 @@ String      freqChangeWarning;
 uint8_t     lowBatteryPercent       = 21;
 
 #if defined(TTGO_T_DECK_PLUS) || defined(TTGO_T_DECK_GPS)
-    String topHeader1   = "";
-    String topHeader1_1 = "";
-    String topHeader1_2 = "";
-    String topHeader1_3 = "";
-    String topHeader2   = "";
+    String topHeader1   = emptyString;
+    String topHeader1_1 = emptyString;
+    String topHeader1_2 = emptyString;
+    String topHeader1_3 = emptyString;
+    String topHeader2   = emptyString;
 #endif
 
 
@@ -105,8 +105,8 @@ namespace MENU_Utils {
         uint32_t lastMenuTime = millis() - menuTime;
         if (!(menuDisplay==0) && !(menuDisplay==400) && !(menuDisplay==410) && !(menuDisplay==300) && !(menuDisplay>=500 && menuDisplay<=5100) && lastMenuTime > 30*1000) {
             menuDisplay     = 0;
-            messageCallsign = "";
-            messageText     = "";
+            messageCallsign = emptyString;
+            messageText     = emptyString;
         }
         if (keyDetected) {
             lastLine = "<Back Up/Down Select>";
@@ -119,7 +119,7 @@ namespace MENU_Utils {
             const auto time_now = now();
             topHeader1_1    = Utils::createDateString(time_now);
             topHeader1_2    = Utils::createTimeString(time_now);
-            topHeader1_3    = "";
+            topHeader1_3    = emptyString;
             topHeader2      = String(gps.location.lat(), 4);
             topHeader2      += " ";
             topHeader2      += String(gps.location.lng(), 4);
@@ -170,12 +170,12 @@ namespace MENU_Utils {
 
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
-                            displayShow(" MSG APRS>", "From --> " + msgSender, msgText,"                 Next=Down", "", "");
+                            displayShow(" MSG APRS>", "From --> " + msgSender, msgText,"                 Next=Down", emptyString, emptyString);
                         #else   // T-Deck
-                            displayShow("MSG APRS>", "From --> " + msgSender, msgText,"             Next=Down", "", "");
+                            displayShow("MSG APRS>", "From --> " + msgSender, msgText,"             Next=Down", emptyString, emptyString);
                         #endif
                     #else
-                        displayShow(" MSG APRS>", "From --> " + msgSender, msgText, "", "", "           Next=Down");
+                        displayShow(" MSG APRS>", "From --> " + msgSender, msgText, emptyString, emptyString, "           Next=Down");
                     #endif
                 }
                 break;
@@ -186,15 +186,15 @@ namespace MENU_Utils {
                 if (keyDetected) {
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
-                            displayShow("WRITE MSG>", "", "CALLSIGN = " + String(messageCallsign), "", "", "<Back               Enter>");
+                            displayShow("WRITE MSG>", emptyString, "CALLSIGN = " + String(messageCallsign), emptyString, emptyString, "<Back               Enter>");
                         #else   //  T-DECK
-                            displayShow("WRITE MSG>", "", "CALLSIGN = " + String(messageCallsign), "", "", "<Back           Enter>");
+                            displayShow("WRITE MSG>", emptyString, "CALLSIGN = " + String(messageCallsign), emptyString, emptyString, "<Back           Enter>");
                         #endif
                     #else
-                        displayShow("WRITE MSG>", "", "CALLSIGN = " + String(messageCallsign), "", "", "<Back          Enter>");
+                        displayShow("WRITE MSG>", emptyString, "CALLSIGN = " + String(messageCallsign), emptyString, emptyString, "<Back          Enter>");
                     #endif
                 } else {
-                    displayShow("WRITE MSG>", "", "No Keyboard Detected", "Can't write Message", "", "1P = Back");           
+                    displayShow("WRITE MSG>", emptyString, "No Keyboard Detected", "Can't write Message", emptyString, "1P = Back");           
                 }     
                 break;
             case 111:
@@ -202,33 +202,33 @@ namespace MENU_Utils {
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
                             if (messageText.length() < 10) {
-                                displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "<Back      (0" + String(messageText.length()) + ")     Enter>", "", "");
+                                displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "<Back      (0" + String(messageText.length()) + ")     Enter>", emptyString, emptyString);
                             } else {
-                                displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "<Back      (" + String(messageText.length()) + ")     Enter>", "", "");
+                                displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "<Back      (" + String(messageText.length()) + ")     Enter>", emptyString, emptyString);
                             }
                         #else   // T-Deck
                             if (messageText.length() < 10) {
-                                displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "<Back    (0" + String(messageText.length()) + ")   Enter>", "", "");
+                                displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "<Back    (0" + String(messageText.length()) + ")   Enter>", emptyString, emptyString);
                             } else {
-                                displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "<Back    (" + String(messageText.length()) + ")   Enter>", "", "");
+                                displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "<Back    (" + String(messageText.length()) + ")   Enter>", emptyString, emptyString);
                             }
                         #endif
                     #else
                         if (messageText.length() < 10) {
-                            displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "", "", "<Back   (0" + String(messageText.length()) + ")   Enter>");
+                            displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, emptyString, emptyString, "<Back   (0" + String(messageText.length()) + ")   Enter>");
                         } else {
-                            displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, "", "", "<Back   (" + String(messageText.length()) + ")   Enter>");
+                            displayShow("WRITE MSG>", "CALLSIGN -> " + messageCallsign, "MSG -> " + messageText, emptyString, emptyString, "<Back   (" + String(messageText.length()) + ")   Enter>");
                         }
                     #endif
                 } else {
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
-                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")",  "", "");
+                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")",  emptyString, emptyString);
                         #else   // T-Deck
-                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")", "", "");
+                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")", emptyString, emptyString);
                         #endif
                     #else
-                        displayShow("WRITE MSG>", "--- MSG TOO LONG! ---", " -> " + messageText, "", "", "<Back   (" + String(messageText.length()) + ")");
+                        displayShow("WRITE MSG>", "--- MSG TOO LONG! ---", " -> " + messageText, emptyString, emptyString, "<Back   (" + String(messageText.length()) + ")");
                     #endif
                 }
                 break;
@@ -236,7 +236,7 @@ namespace MENU_Utils {
                 displayShow(" MESSAGES>", "  Read (" + String(MSG_Utils::getNumAPRSMessages()) + ")", "  Write", "> Delete", "  APRSThursday", lastLine);
                 break;
             case 120:   // 1.Messages ---> Messages Delete ---> Delete: ALL
-                displayShow("DELETE MSG", "", "  DELETE APRS MSG?", "", "", " Confirm = LP or '>'");
+                displayShow("DELETE MSG", emptyString, "  DELETE APRS MSG?", emptyString, emptyString, " Confirm = LP or '>'");
                 break;
             case 13:    // 1.Messages ---> APRSThursday
                 displayShow(" MESSAGES>", "  Read (" + String(MSG_Utils::getNumAPRSMessages()) + ")", "  Write", "  Delete", "> APRSThursday", lastLine);
@@ -249,33 +249,33 @@ namespace MENU_Utils {
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
                             if (messageText.length() < 10) {
-                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back      (0" + String(messageText.length()) + ")     Enter>", "", "");
+                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back      (0" + String(messageText.length()) + ")     Enter>", emptyString, emptyString);
                             } else {
-                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back      (" + String(messageText.length()) + ")     Enter>", "", "");
+                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back      (" + String(messageText.length()) + ")     Enter>", emptyString, emptyString);
                             }
                         #else   // T-Deck
                             if (messageText.length() < 10) {
-                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back    (0" + String(messageText.length()) + ")   Enter>", "", "");
+                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back    (0" + String(messageText.length()) + ")   Enter>", emptyString, emptyString);
                             } else {
-                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back    (" + String(messageText.length()) + ")   Enter>", "", "");
+                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back    (" + String(messageText.length()) + ")   Enter>", emptyString, emptyString);
                             }                            
                         #endif
                     #else
                         if (messageText.length() < 10) {
-                            displayShow("WRITE MSG>", "  - APRSThursday -", "MSG -> " + messageText, "", "", "<Back   (0" + String(messageText.length()) + ")   Enter>");
+                            displayShow("WRITE MSG>", "  - APRSThursday -", "MSG -> " + messageText, emptyString, emptyString, "<Back   (0" + String(messageText.length()) + ")   Enter>");
                         } else {
-                            displayShow("WRITE MSG>", "  - APRSThursday -", "MSG -> " + messageText, "", "", "<Back   (" + String(messageText.length()) + ")   Enter>");
+                            displayShow("WRITE MSG>", "  - APRSThursday -", "MSG -> " + messageText, emptyString, emptyString, "<Back   (" + String(messageText.length()) + ")   Enter>");
                         }
                     #endif                    
                 } else {
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
-                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")",  "", "");
+                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")",  emptyString, emptyString);
                         #else   // T-Deck
-                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")", "", "");
+                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")", emptyString, emptyString);
                         #endif
                     #else
-                        displayShow("WRITE MSG>", "--- MSG TOO LONG! ---", " -> " + messageText, "", "", "<Back   (" + String(messageText.length()) + ")");
+                        displayShow("WRITE MSG>", "--- MSG TOO LONG! ---", " -> " + messageText, emptyString, emptyString, "<Back   (" + String(messageText.length()) + ")");
                     #endif                    
                 }
                 break;
@@ -287,33 +287,33 @@ namespace MENU_Utils {
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
                             if (messageText.length() < 10) {
-                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back      (0" + String(messageText.length()) + ")     Enter>", "", "");
+                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back      (0" + String(messageText.length()) + ")     Enter>", emptyString, emptyString);
                             } else {
-                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back      (" + String(messageText.length()) + ")     Enter>", "", "");
+                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back      (" + String(messageText.length()) + ")     Enter>", emptyString, emptyString);
                             }
                         #else   // T-Deck
                             if (messageText.length() < 10) {
-                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back    (0" + String(messageText.length()) + ")   Enter>", "", "");
+                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back    (0" + String(messageText.length()) + ")   Enter>", emptyString, emptyString);
                             } else {
-                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back    (" + String(messageText.length()) + ")   Enter>", "", "");
+                                displayShow("WRITE MSG>", "    - APRSThursday -", "MSG -> " + messageText, "<Back    (" + String(messageText.length()) + ")   Enter>", emptyString, emptyString);
                             }
                         #endif
                     #else
                         if (messageText.length() < 10) {
-                            displayShow("WRITE MSG>", "  - APRSThursday -", "MSG -> " + messageText, "", "", "<Back   (0" + String(messageText.length()) + ")   Enter>");
+                            displayShow("WRITE MSG>", "  - APRSThursday -", "MSG -> " + messageText, emptyString, emptyString, "<Back   (0" + String(messageText.length()) + ")   Enter>");
                         } else {
-                            displayShow("WRITE MSG>", "  - APRSThursday -", "MSG -> " + messageText, "", "", "<Back   (" + String(messageText.length()) + ")   Enter>");
+                            displayShow("WRITE MSG>", "  - APRSThursday -", "MSG -> " + messageText, emptyString, emptyString, "<Back   (" + String(messageText.length()) + ")   Enter>");
                         }
                     #endif                    
                 } else {
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
-                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")",  "", "");
+                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")",  emptyString, emptyString);
                         #else   // T-Deck
-                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")", "", "");
+                            displayShow("WRITE MSG>", "  --- MSG TOO LONG! ---", " -> " + messageText, "<Back   (" + String(messageText.length()) + ")", emptyString, emptyString);
                         #endif
                     #else
-                        displayShow("WRITE MSG>", "--- MSG TOO LONG! ---", " -> " + messageText, "", "", "<Back   (" + String(messageText.length()) + ")");
+                        displayShow("WRITE MSG>", "--- MSG TOO LONG! ---", " -> " + messageText, emptyString, emptyString, "<Back   (" + String(messageText.length()) + ")");
                     #endif
                 }
                 break;
@@ -352,7 +352,7 @@ namespace MENU_Utils {
 
 
             case 200:   // 2.Configuration ---> Change Callsign
-                displayShow(" CALLSIGN>", "","  Confirm Change?","","","<Back         Select>");
+                displayShow(" CALLSIGN>", emptyString,"  Confirm Change?",emptyString,emptyString,"<Back         Select>");
                 break;
 
             case 210:   // 2.Configuration ---> Change Frequency
@@ -361,60 +361,60 @@ namespace MENU_Utils {
                     case 1: freqChangeWarning = "      PL --> UK"; break;
                     case 2: freqChangeWarning = "      UK --> Eu"; break;
                 }
-                displayShow("LORA FREQ>", "","   Confirm Change?", freqChangeWarning, "", "<Back         Select>");
+                displayShow("LORA FREQ>", emptyString,"   Confirm Change?", freqChangeWarning, emptyString, "<Back         Select>");
                 break;
 
             case 220:   // 2.Configuration ---> Display ---> ECO Mode
-                displayShow(" DISPLAY>", "", "> ECO Mode    (" + checkProcessActive(displayEcoMode) + ")", "  Brightness  (" + screenBrightnessAsString(screenBrightness) + ")","",lastLine);
+                displayShow(" DISPLAY>", emptyString, "> ECO Mode    (" + checkProcessActive(displayEcoMode) + ")", "  Brightness  (" + screenBrightnessAsString(screenBrightness) + ")",emptyString,lastLine);
                 break;
 
             case 221:   // 2.Configuration ---> Display ---> Brightness
-                displayShow(" DISPLAY>", "", "  ECO Mode    (" + checkProcessActive(displayEcoMode) + ")", "> Brightness  (" + screenBrightnessAsString(screenBrightness) + ")","",lastLine);
+                displayShow(" DISPLAY>", emptyString, "  ECO Mode    (" + checkProcessActive(displayEcoMode) + ")", "> Brightness  (" + screenBrightnessAsString(screenBrightness) + ")",emptyString,lastLine);
                 break;
             case 2210:   // 2.Configuration ---> Display ---> Brightness: MIN
-                displayShow("BRIGHTNESS", "", "> Low", "  Mid","  Max",lastLine);
+                displayShow("BRIGHTNESS", emptyString, "> Low", "  Mid","  Max",lastLine);
                 break;
             case 2211:   // 2.Configuration ---> Display ---> Brightness: MID
-                displayShow("BRIGHTNESS", "", "  Low", "> Mid","  Max",lastLine);
+                displayShow("BRIGHTNESS", emptyString, "  Low", "> Mid","  Max",lastLine);
                 break;
             case 2212:   // 2.Configuration ---> Display ---> Brightness: MAX
-                displayShow("BRIGHTNESS", "", "  Low", "  Mid","> Max",lastLine);
+                displayShow("BRIGHTNESS", emptyString, "  Low", "  Mid","> Max",lastLine);
                 break;
 
             case 230:
                 if (bluetoothActive) {
                     bluetoothActive = false;
-                    displayShow("BLUETOOTH>", "", " Bluetooth --> OFF", 1000);
+                    displayShow("BLUETOOTH>", emptyString, " Bluetooth --> OFF", 1000);
                 } else {
                     bluetoothActive = true;
-                    displayShow("BLUETOOTH>", "", " Bluetooth --> ON", 1000);
+                    displayShow("BLUETOOTH>", emptyString, " Bluetooth --> ON", 1000);
                 }
                 menuDisplay = 23;
                 break;
 
             case 240:    // 2.Configuration ---> Status
-                displayShow(" STATUS>", "", "> Write","  Select","",lastLine);
+                displayShow(" STATUS>", emptyString, "> Write","  Select",emptyString,lastLine);
                 break;
             case 241:    // 2.Configuration ---> Status
-                displayShow(" STATUS>", "", "  Write","> Select","",lastLine);
+                displayShow(" STATUS>", emptyString, "  Write","> Select",emptyString,lastLine);
                 break;
 
             case 250:    // 2.Configuration ---> Notifications
-                displayShow(" NOTIFIC>", "> Turn Off Sound/Led","","","",lastLine);
+                displayShow(" NOTIFIC>", "> Turn Off Sound/Led",emptyString,emptyString,emptyString,lastLine);
                 break;
 
             case 260:   // 2.Configuration ---> Reboot
                 if (keyDetected) {
-                    displayShow(" REBOOT?", "","Confirm Reboot...","","","<Back   Enter=Confirm");
+                    displayShow(" REBOOT?", emptyString,"Confirm Reboot...",emptyString,emptyString,"<Back   Enter=Confirm");
                 } else {
-                    displayShow(" REBOOT?", "no Keyboard Detected"," Use RST Button to","Reboot Tracker","",lastLine);
+                    displayShow(" REBOOT?", "no Keyboard Detected"," Use RST Button to","Reboot Tracker",emptyString,lastLine);
                 }
                 break;
             case 270:   // 2.Configuration ---> Power Off
                 if (keyDetected) {
-                    displayShow("POWER OFF?", "","Confirm Power Off...","","","<Back   Enter=Confirm");
+                    displayShow("POWER OFF?", emptyString,"Confirm Power Off...",emptyString,emptyString,"<Back   Enter=Confirm");
                 } else {
-                    displayShow("POWER OFF?", "no Keyboard Detected"," Use PWR Button to","Power Off Tracker","",lastLine);
+                    displayShow("POWER OFF?", "no Keyboard Detected"," Use PWR Button to","Power Off Tracker",emptyString,lastLine);
                 }
                 break;
 
@@ -438,10 +438,10 @@ namespace MENU_Utils {
 
 //////////
             case 40:    //3.Stations ---> Packet Decoder
-                displayShow(" STATIONS>", "", "> Packet Decoder", "  Near By Stations", "", "<Back");
+                displayShow(" STATIONS>", emptyString, "> Packet Decoder", "  Near By Stations", emptyString, "<Back");
                 break;
             case 41:    //3.Stations ---> Near By Stations
-                displayShow(" STATIONS>", "", "  Packet Decoder", "> Near By Stations", "", "<Back");
+                displayShow(" STATIONS>", emptyString, "  Packet Decoder", "> Near By Stations", emptyString, "<Back");
                 break;
 
             case 400:   //3.Stations ---> Packet Decoder
@@ -466,13 +466,13 @@ namespace MENU_Utils {
 
                         displayShow(firstLineDecoder, "GPS " + String(lastReceivedPacket.latitude,3) + " " + String(lastReceivedPacket.longitude,3), courseSpeedAltitude, "D:" + String(distanceKm) + "km    " + String(courseTo,0), pathDec, "< RSSI:" + String(lastReceivedPacket.rssi) + " SNR:" + String(lastReceivedPacket.snr));
                     } else if (lastReceivedPacket.type == 1) {    // message
-                        displayShow(firstLineDecoder, "ADDRESSEE: " + lastReceivedPacket.addressee, "MSG:  " + lastReceivedPacket.payload, "", "", "< RSSI:" + String(lastReceivedPacket.rssi) + " SNR:" + String(lastReceivedPacket.snr));
+                        displayShow(firstLineDecoder, "ADDRESSEE: " + lastReceivedPacket.addressee, "MSG:  " + lastReceivedPacket.payload, emptyString, emptyString, "< RSSI:" + String(lastReceivedPacket.rssi) + " SNR:" + String(lastReceivedPacket.snr));
                     } else if (lastReceivedPacket.type == 2) {    // status
-                        displayShow(firstLineDecoder, "-------STATUS-------", lastReceivedPacket.payload, "", "", "< RSSI:" + String(lastReceivedPacket.rssi) + " SNR:" + String(lastReceivedPacket.snr));
+                        displayShow(firstLineDecoder, "-------STATUS-------", lastReceivedPacket.payload, emptyString, emptyString, "< RSSI:" + String(lastReceivedPacket.rssi) + " SNR:" + String(lastReceivedPacket.snr));
                     } else if (lastReceivedPacket.type == 3) {    // telemetry
-                        displayShow(firstLineDecoder, "------TELEMETRY------", "", "", "", "< RSSI:" + String(lastReceivedPacket.rssi) + " SNR:" + String(lastReceivedPacket.snr));
+                        displayShow(firstLineDecoder, "------TELEMETRY------", emptyString, emptyString, emptyString, "< RSSI:" + String(lastReceivedPacket.rssi) + " SNR:" + String(lastReceivedPacket.snr));
                     } else if (lastReceivedPacket.type == 5) {    // object
-                        displayShow(firstLineDecoder, "-------OBJECT-------", "", "", "", "< RSSI:" + String(lastReceivedPacket.rssi) + " SNR:" + String(lastReceivedPacket.snr));
+                        displayShow(firstLineDecoder, "-------OBJECT-------", emptyString, emptyString, emptyString, "< RSSI:" + String(lastReceivedPacket.rssi) + " SNR:" + String(lastReceivedPacket.snr));
                     }
                 }
                 break;
@@ -499,13 +499,13 @@ namespace MENU_Utils {
                 break;
 
             case 500:    // 5.Winlink ---> Login
-                displayShow(" WINLINK>", "" , "Login Initiation ...", "Challenge -> waiting", "" , "");
+                displayShow(" WINLINK>", emptyString , "Login Initiation ...", "Challenge -> waiting", emptyString , emptyString);
                 break;
             case 501:    // 5.Winlink ---> Login
-                displayShow(" WINLINK>", "" , "Login Initiation ...", "Challenge -> sent", "" , "");
+                displayShow(" WINLINK>", emptyString , "Login Initiation ...", "Challenge -> sent", emptyString , emptyString);
                 break;
             case 502:    // 5.Winlink ---> Login
-                displayShow(" WINLINK>", "" , "Login Initiation ...", "Challenge -> ack ...", "" , "");
+                displayShow(" WINLINK>", emptyString , "Login Initiation ...", "Challenge -> ack ...", emptyString , emptyString);
                 break;
 
             case 5000:   // WINLINK: List Pend. Mail //
@@ -516,7 +516,7 @@ namespace MENU_Utils {
                 displayShow("WLNK MENU>", "  List Pend. Mails", "> Downloaded Mails", "  Read Mail    (R#)", "  Reply Mail   (Y#)", lastLine);
                 break;
             case 50100:    // WINLINK: Downloaded Mails //
-                displayShow(" WINLINK>", "" , "> Read SavedMails(" + String(MSG_Utils::getNumWLNKMails()) + ")", "  Delete SavedMails", "" , lastLine);
+                displayShow(" WINLINK>", emptyString , "> Read SavedMails(" + String(MSG_Utils::getNumWLNKMails()) + ")", "  Delete SavedMails", emptyString , lastLine);
                 break;
             case 50101:    // WINLINK: Downloaded Mails //
                 {
@@ -524,74 +524,74 @@ namespace MENU_Utils {
 
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
-                            displayShow("WLNK MAIL>", mailText, "                 Next=Down", "", "", "");
+                            displayShow("WLNK MAIL>", mailText, "                 Next=Down", emptyString, emptyString, emptyString);
                         #else   // T-Deck
-                            displayShow("WLNK MAIL>", mailText, "             Next=Down", "", "", "");
+                            displayShow("WLNK MAIL>", mailText, "             Next=Down", emptyString, emptyString, emptyString);
                         #endif
                     #else
-                        displayShow("WLNK MAIL>", "", mailText, "", "", "           Next=Down");
+                        displayShow("WLNK MAIL>", emptyString, mailText, emptyString, emptyString, "           Next=Down");
                     #endif
                     
                 }
                 break;
             case 50110:    // WINLINK: Downloaded Mails //
-                displayShow(" WINLINK>", "" , "  Read SavedMails(" + String(MSG_Utils::getNumWLNKMails()) + ")", "> Delete SavedMails", "" , lastLine);
+                displayShow(" WINLINK>", emptyString , "  Read SavedMails(" + String(MSG_Utils::getNumWLNKMails()) + ")", "> Delete SavedMails", emptyString , lastLine);
                 break;
             case 50111:    // WINLINK: Downloaded Mails //
-                displayShow("WLNK DEL>", "", "  DELETE ALL MAILS?", "", "", " Confirm = LP or '>'");
+                displayShow("WLNK DEL>", emptyString, "  DELETE ALL MAILS?", emptyString, emptyString, " Confirm = LP or '>'");
                 break;
 
             case 5020:    // WINLINK: Read Mail //
                 displayShow("WLNK MENU>", "  Downloaded Mails", "> Read Mail    (R#)", "  Reply Mail   (Y#)", "  Forward Mail (F#)", lastLine);
                 break;
             case 5021:
-                displayShow("WLNK READ>", "", "    READ MAIL N." + winlinkMailNumber, "", "", "<Back          Enter>");
+                displayShow("WLNK READ>", emptyString, "    READ MAIL N." + winlinkMailNumber, emptyString, emptyString, "<Back          Enter>");
                 break;
 
             case 5030:    // WINLINK: Reply Mail //
                 displayShow("WLNK MENU>", "  Read Mail    (R#)", "> Reply Mail   (Y#)", "  Forward Mail (F#)", "  Delete Mail  (K#)", lastLine);
                 break;
             case 5031:
-                displayShow("WLNK REPLY", "", "   REPLY MAIL N." + winlinkMailNumber , "", "", "<Back          Enter>");
+                displayShow("WLNK REPLY", emptyString, "   REPLY MAIL N." + winlinkMailNumber , emptyString, emptyString, "<Back          Enter>");
                 break;
 
             case 5040:    // WINLINK: Foward Mail //
                 displayShow("WLNK MENU>", "  Reply Mail   (Y#)", "> Forward Mail (F#)", "  Delete Mail  (K#)", "  Alias Menu", lastLine);
                 break;
             case 5041:    // WINLINK: Forward Mail //
-                displayShow("WLNK FORW>", "", "  FORWARD MAIL N." + winlinkMailNumber , "", "", "<Back          Enter>");
+                displayShow("WLNK FORW>", emptyString, "  FORWARD MAIL N." + winlinkMailNumber , emptyString, emptyString, "<Back          Enter>");
                 break;
             case 5042:    // WINLINK: Forward Mail //
-                displayShow("WLNK FORW>", "  FORWARD MAIL N." + winlinkMailNumber , "To = " + winlinkAddressee, "", "", "<Back          Enter>");
+                displayShow("WLNK FORW>", "  FORWARD MAIL N." + winlinkMailNumber , "To = " + winlinkAddressee, emptyString, emptyString, "<Back          Enter>");
                 break;
 
             case 5050:    // WINLINK: Delete Mail //
                 displayShow("WLNK MENU>", "  Forward Mail (F#)", "> Delete Mail  (K#)", "  Alias Menu", "  Log Out", lastLine);
                 break;
             case 5051:    // WINLINK: Delete Mail //
-                displayShow("WLNK DEL>", "", "   DELETE MAIL N."  + winlinkMailNumber, "", "", "<Back          Enter>");
+                displayShow("WLNK DEL>", emptyString, "   DELETE MAIL N."  + winlinkMailNumber, emptyString, emptyString, "<Back          Enter>");
                 break;
             
             case 5060:    // WINLINK: Alias Menu //
                 displayShow("WLNK MENU>", "  Delete Mail  (K#)", "> Alias Menu", "  Log Out", "  Write Mail", lastLine);
                 break;
             case 5061:    // WINLINK: Alias Menu : Create Alias //
-                displayShow("WLNK ALIAS", "> Create Alias" , "  Delete Alias ", "  List All Alias", "", lastLine);
+                displayShow("WLNK ALIAS", "> Create Alias" , "  Delete Alias ", "  List All Alias", emptyString, lastLine);
                 break;
             case 50610:   // WINLINK: Alias Menu : Create Alias //
-                displayShow("WLNK ALIAS", "", "Write Alias to Create", "     -> " + winlinkAlias, "", "<Back          Enter>");
+                displayShow("WLNK ALIAS", emptyString, "Write Alias to Create", "     -> " + winlinkAlias, emptyString, "<Back          Enter>");
                 break;
             case 50611:   // WINLINK: Alias Menu : Create Alias //
-                displayShow("WLNK ALIAS", "", "      " + winlinkAlias + " =", winlinkAliasComplete, "", "<Back          Enter>");
+                displayShow("WLNK ALIAS", emptyString, "      " + winlinkAlias + " =", winlinkAliasComplete, emptyString, "<Back          Enter>");
                 break;
             case 5062:    // WINLINK: Alias Menu : Delete Alias //
-                displayShow("WLNK ALIAS", "  Create Alias" , "> Delete Alias ", "  List All Alias", "", lastLine);
+                displayShow("WLNK ALIAS", "  Create Alias" , "> Delete Alias ", "  List All Alias", emptyString, lastLine);
                 break;
             case 50620:   // WINLINK: Alias Menu : Delete Alias //
-                displayShow("WLNK ALIAS", "Write Alias to Delete", "", "     -> " + winlinkAlias, "", "<Back          Enter>");
+                displayShow("WLNK ALIAS", "Write Alias to Delete", emptyString, "     -> " + winlinkAlias, emptyString, "<Back          Enter>");
                 break;
             case 5063:    // WINLINK: Alias Menu : List Alias//
-                displayShow("WLNK ALIAS", "  Create Alias" , "  Delete Alias ", "> List All Alias", "", lastLine);
+                displayShow("WLNK ALIAS", "  Create Alias" , "  Delete Alias ", "> List All Alias", emptyString, lastLine);
                 break;
 
             case 5070:    // WINLINK: Log Out MAIL //
@@ -604,53 +604,53 @@ namespace MENU_Utils {
             case 5081:    // WINLINK: WRITE MAIL: Addressee //
                 #ifdef HAS_TFT
                     #if defined(HELTEC_WIRELESS_TRACKER)
-                        displayShow("WLNK MAIL>", "   --- Send Mail to ---", "-> " + winlinkAddressee, "<Back               Enter>", "", "");
+                        displayShow("WLNK MAIL>", "   --- Send Mail to ---", "-> " + winlinkAddressee, "<Back               Enter>", emptyString, emptyString);
                     #else   // T-Deck?
-                        displayShow("WLNK MAIL>", "   --- Send Mail to ---", "-> " + winlinkAddressee, "<Back           Enter>", "", "");
+                        displayShow("WLNK MAIL>", "   --- Send Mail to ---", "-> " + winlinkAddressee, "<Back           Enter>", emptyString, emptyString);
                     #endif
                 #else
-                    displayShow("WLNK MAIL>", "--- Send Mail to ---", "-> " + winlinkAddressee, "", "", "<Back          Enter>");
+                    displayShow("WLNK MAIL>", "--- Send Mail to ---", "-> " + winlinkAddressee, emptyString, emptyString, "<Back          Enter>");
                 #endif
                 break;
             case 5082:    // WINLINK: WRITE MAIL: Subject //
                 #ifdef HAS_TFT
                     #if defined(HELTEC_WIRELESS_TRACKER)
-                        displayShow("WLNK MAIL>", "   --- Write Subject ---", "-> " + winlinkSubject, "<Back               Enter>", "", "");
+                        displayShow("WLNK MAIL>", "   --- Write Subject ---", "-> " + winlinkSubject, "<Back               Enter>", emptyString, emptyString);
                     #else   // T-Deck?
-                        displayShow("WLNK MAIL>", "   --- Write Subject ---", "-> " + winlinkSubject, "<Back           Enter>", "", "");
+                        displayShow("WLNK MAIL>", "   --- Write Subject ---", "-> " + winlinkSubject, "<Back           Enter>", emptyString, emptyString);
                     #endif
                 #else
-                    displayShow("WLNK MAIL>", "--- Write Subject ---", "-> " + winlinkSubject, "", "", "<Back          Enter>");
+                    displayShow("WLNK MAIL>", "--- Write Subject ---", "-> " + winlinkSubject, emptyString, emptyString, "<Back          Enter>");
                 #endif                
                 break;
             case 5083:    // WINLINK: WRITE MAIL: Body //
                 if (winlinkBody.length() <= 67) {
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
-                            displayShow("WLNK MAIL>", "-- Body (Lenght =" + String(winlinkBody.length()) + ")", "-> " + winlinkBody, "<Clear Body         Enter>", "", "");
+                            displayShow("WLNK MAIL>", "-- Body (Lenght =" + String(winlinkBody.length()) + ")", "-> " + winlinkBody, "<Clear Body         Enter>", emptyString, emptyString);
                         #else   // T-Deck
-                            displayShow("WLNK MAIL>", "-- Body (Lenght =" + String(winlinkBody.length()) + ")", "-> " + winlinkBody, "<Clear Body     Enter>", "", "");
+                            displayShow("WLNK MAIL>", "-- Body (Lenght =" + String(winlinkBody.length()) + ")", "-> " + winlinkBody, "<Clear Body     Enter>", emptyString, emptyString);
                         #endif
                     #else
-                        displayShow("WLNK MAIL>", "-- Body (Lenght =" + String(winlinkBody.length()) + ")", "-> " + winlinkBody, "", "", "<Clear Body    Enter>");
+                        displayShow("WLNK MAIL>", "-- Body (Lenght =" + String(winlinkBody.length()) + ")", "-> " + winlinkBody, emptyString, emptyString, "<Clear Body    Enter>");
                     #endif
                 } else {
                     #ifdef HAS_TFT
                         #if defined(HELTEC_WIRELESS_TRACKER)
-                            displayShow("WLNK MAIL>", "-- Body Too Long = " + String(winlinkBody.length()), "-> " + winlinkBody, "<Clear Body", "", "");
+                            displayShow("WLNK MAIL>", "-- Body Too Long = " + String(winlinkBody.length()), "-> " + winlinkBody, "<Clear Body", emptyString, emptyString);
                         #else   // T-Deck
-                            displayShow("WLNK MAIL>", "-- Body Too Long = " + String(winlinkBody.length()), "-> " + winlinkBody, "<Clear Body", "", "");
+                            displayShow("WLNK MAIL>", "-- Body Too Long = " + String(winlinkBody.length()), "-> " + winlinkBody, "<Clear Body", emptyString, emptyString);
                         #endif
                     #else
-                        displayShow("WLNK MAIL>", "-- Body Too Long = " + String(winlinkBody.length()), "-> " + winlinkBody, "", "", "<Clear Body");
+                        displayShow("WLNK MAIL>", "-- Body Too Long = " + String(winlinkBody.length()), "-> " + winlinkBody, emptyString, emptyString, "<Clear Body");
                     #endif                    
                 }
                 break;
             case 5084:    // WINLINK: WRITE MAIL: End Mail? //
-                displayShow("WLNK MAIL>", "", "> End Mail", "  1 More Line", "", "      Up/Down Select>");
+                displayShow("WLNK MAIL>", emptyString, "> End Mail", "  1 More Line", emptyString, "      Up/Down Select>");
                 break;
             case 5085:    // WINLINK: WRITE MAIL: One More Line(Body) //
-                displayShow("WLNK MAIL>", "", "  End Mail", "> 1 More Line", "", "      Up/Down Select>");
+                displayShow("WLNK MAIL>", emptyString, "  End Mail", "> 1 More Line", emptyString, "      Up/Down Select>");
                 break;
 
                 // validar winlinkStatus = 0
@@ -677,21 +677,21 @@ namespace MENU_Utils {
                 if (keyDetected) {
                     if (messageText.length() <= 67) {
                         String lengthStr = (messageText.length() < 10) ? "0" + String(messageText.length()) : String(messageText.length());
-                        displayShow(" COMMENT>", "Send this Comment in", "the next GPS Beacon :", messageText, "", "<Back   (" + lengthStr + ")   Enter>");
+                        displayShow(" COMMENT>", "Send this Comment in", "the next GPS Beacon :", messageText, emptyString, "<Back   (" + lengthStr + ")   Enter>");
                     } else {
-                        displayShow(" COMMENT>", "Comment is too long! ", "Comment too long:" + messageText, "", "", "<Back   (" + String(messageText.length()) + ")>");
+                        displayShow(" COMMENT>", "Comment is too long! ", "Comment too long:" + messageText, emptyString, emptyString, "<Back   (" + String(messageText.length()) + ")>");
                     }
                 } else {
-                    displayShow(" COMMENT>", "No Keyboard Detected", "", "", "", lastLine);
+                    displayShow(" COMMENT>", "No Keyboard Detected", emptyString, emptyString, emptyString, lastLine);
                 }
                 break;
 
 //////////
             case 9000:  //  9. multiPress Menu ---> Turn ON WiFi AP
-                displayShow(" CONFIG>", "> Turn Tracker Off","  Config. WiFi AP",  "","",lastLine);
+                displayShow(" CONFIG>", "> Turn Tracker Off","  Config. WiFi AP",  emptyString,emptyString,lastLine);
                 break;
             case 9001:  //  9. multiPress Menu
-                displayShow(" CONFIG>", "  Turn Tracker Off","> Config. WiFi AP",  "","",lastLine);
+                displayShow(" CONFIG>", "  Turn Tracker Off","> Config. WiFi AP",  emptyString,emptyString,lastLine);
                 break;
 
 
@@ -710,9 +710,9 @@ namespace MENU_Utils {
                 }
 
                 if (disableGPS) {
-                    secondRowMainMenu = "";
+                    secondRowMainMenu = emptyString;
                     thirdRowMainMenu = "    LoRa APRS TNC";
-                    fourthRowMainMenu = "";
+                    fourthRowMainMenu = emptyString;
                 } else {
                     const auto time_now = now();
                     secondRowMainMenu = Utils::createDateString(time_now) + "   " + Utils::createTimeString(time_now);

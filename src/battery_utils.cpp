@@ -61,7 +61,7 @@ namespace BATTERY_Utils {
             if (lastNoGPSCheckTime == 0 || millis() - lastNoGPSCheckTime > 15 * 60 * 1000) {
                 String batteryVoltage = POWER_Utils::getBatteryInfoVoltage();
                 if (batteryVoltage.toFloat() < 3.0) {
-                    displayShow("!BATTERY!", "", "LOW BATTERY VOLTAGE!",5000);
+                    displayShow("!BATTERY!", emptyString, "LOW BATTERY VOLTAGE!",5000);
                     POWER_Utils::shutdown();
                 }
                 lastNoGPSCheckTime = millis();

@@ -40,7 +40,7 @@ extern APRSPacket           lastReceivedPacket;
 
 extern bool                 SleepModeActive;
 
-String  lastMessageSaved        = "";
+String  lastMessageSaved        = emptyString;
 int     numAPRSMessages         = 0;
 int     numWLNKMessages         = 0;
 bool    noAPRSMsgWarning        = false;
@@ -54,8 +54,8 @@ std::vector<String>             outputAckRequestBuffer;
 std::vector<Packet15SegBuffer>  packet15SegBuffer;
 
 bool        ackRequestState     = false;
-String      ackCallsignRequest  = "";
-String      ackNumberRequest    = "";
+String      ackCallsignRequest  = emptyString;
+String      ackNumberRequest    = emptyString;
 uint32_t    lastMsgRxTime       = millis();
 uint32_t    lastRetryTime       = millis();
 
@@ -139,7 +139,7 @@ namespace MSG_Utils {
                 fileToRead = SPIFFS.open("/aprsMessages.txt");
             }
             if (noAPRSMsgWarning) {
-                displayShow("   INFO", "", " NO APRS MSG SAVED", 1500);
+                displayShow("   INFO", emptyString, " NO APRS MSG SAVED", 1500);
             } else {
                 if(!fileToRead) {
                     Serial.println("Failed to open file for reading");
@@ -159,7 +159,7 @@ namespace MSG_Utils {
                 fileToRead = SPIFFS.open("/winlinkMails.txt");
             }
             if (noWLNKMsgWarning) {
-                displayShow("   INFO", "", " NO WLNK MAILS SAVED", 1500);
+                displayShow("   INFO", emptyString, " NO WLNK MAILS SAVED", 1500);
             } else {
                 if(!fileToRead) {
                     Serial.println("Failed to open file for reading");
@@ -241,13 +241,13 @@ namespace MSG_Utils {
     void sendMessage(const String& station, const String& textMessage) {
         String newPacket = APRSPacketLib::generateMessagePacket(currentBeacon->callsign, "APLRT1", Config.path, station, textMessage);
         if (textMessage.indexOf("ack") == 0 && station != "WLNK-1") {  // don't show Winlink ACK
-            displayShow("<<ACK Tx>>", "", "", 500);
+            displayShow("<<ACK Tx>>", emptyString, emptyString, 500);
         } else if (station.indexOf("CA2RXU-15") == 0 && textMessage.indexOf("wrl") == 0) {
-            displayShow("<WEATHER>","", "--- Sending Query ---",  1000);
+            displayShow("<WEATHER>",emptyString, "--- Sending Query ---",  1000);
             wxRequestTime = millis();
             wxRequestStatus = true;
         } else {
-            displayShow((station == "WLNK-1") ? "WINLINK Tx" : " MSG Tx >", "", newPacket, 100);
+            displayShow((station == "WLNK-1") ? "WINLINK Tx" : " MSG Tx >", emptyString, newPacket, 100);
         }
         LoRa_Utils::sendNewPacket(newPacket);
     }
@@ -492,19 +492,19 @@ namespace MSG_Utils {
                                 logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink","---> Login Succesfull");
                                 lastMsgRxTime = millis();
                                 winlinkStatus = 5;
-                                displayShow(" WINLINK>", "", " LOGGED !!!!", 2000);
+                                displayShow(" WINLINK>", emptyString, " LOGGED !!!!", 2000);
                                 cleanOutputAckRequestBuffer("WLNK-1");
                                 menuDisplay = 5000;
                             } else if (winlinkStatus == 5 && lastReceivedPacket.payload.indexOf("Log off successful") == 0 ) {
                                 logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Winlink","---> Log Out");
                                 lastMsgRxTime = millis();
-                                displayShow(" WINLINK>", "", "    LOG OUT !!!", 2000);
+                                displayShow(" WINLINK>", emptyString, "    LOG OUT !!!", 2000);
                                 cleanOutputAckRequestBuffer("WLNK-1");
                                 lastChallengeTime = 0;
                                 winlinkStatus = 0;
                             } else if ((winlinkStatus == 5) && (lastReceivedPacket.payload.indexOf("Log off successful") == -1) && (lastReceivedPacket.payload.indexOf("Login valid") == -1) && (lastReceivedPacket.payload.indexOf("Login [") == -1) && (lastReceivedPacket.payload.indexOf("ack") == -1)) {
                                 lastMsgRxTime = millis();
-                                displayShow("<WLNK Rx >", "", lastReceivedPacket.payload, 3000);
+                                displayShow("<WLNK Rx >", emptyString, lastReceivedPacket.payload, 3000);
                                 saveNewMessage(1, lastReceivedPacket.sender, lastReceivedPacket.payload);
                             } 
                         } else {
@@ -518,7 +518,7 @@ namespace MSG_Utils {
                                         displayShow("< MSG Rx >", "From --> " + lastReceivedPacket.sender, lastReceivedPacket.payload , 3000);
                                     #endif                                    
                                 #else
-                                    displayShow("< MSG Rx >", "From --> " + lastReceivedPacket.sender, lastReceivedPacket.payload , "", "", "", 3000);
+                                    displayShow("< MSG Rx >", "From --> " + lastReceivedPacket.sender, lastReceivedPacket.payload , emptyString, emptyString, emptyString, 3000);
                                 #endif
 
                                 if (lastReceivedPacket.payload.indexOf("ack") != 0) {

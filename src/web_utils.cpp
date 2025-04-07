@@ -197,7 +197,7 @@ namespace WEB_Utils {
 
         Config.writeFile();
 
-        AsyncWebServerResponse *response        = request->beginResponse(302, "text/html", "");
+        AsyncWebServerResponse *response        = request->beginResponse(302, "text/html", emptyString);
         response->addHeader("Location", "/");
         request->send(response);
         displayToggle(false);

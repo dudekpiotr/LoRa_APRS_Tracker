@@ -67,7 +67,7 @@ namespace STATION_Utils {
 
     void nearTrackerInit() {
         for (int i = 0; i < 4; i++) {
-            nearTrackers[i].callsign    = "";
+            nearTrackers[i].callsign    = emptyString;
             nearTrackers[i].distance    = 0.0;
             nearTrackers[i].course      = 0;
             nearTrackers[i].lastTime    = 0;
@@ -75,8 +75,8 @@ namespace STATION_Utils {
     }
 
     const String getNearTracker(uint8_t position) {
-        if (nearTrackers[position].callsign == "") {
-            return "";
+        if (nearTrackers[position].callsign == emptyString) {
+            return emptyString;
         } else {
             return nearTrackers[position].callsign + "> " + String(nearTrackers[position].distance,2) + "km " + String(nearTrackers[position].course);
         }
@@ -84,8 +84,8 @@ namespace STATION_Utils {
 
     void deleteListenedTrackersbyTime() {
         for (int a = 0; a < 4; a++) {                       // clean nearTrackers[] after time
-            if (nearTrackers[a].callsign != "" && (millis() - nearTrackers[a].lastTime > Config.rememberStationTime * 60 * 1000)) {
-                nearTrackers[a].callsign    = "";
+            if (nearTrackers[a].callsign != emptyString && (millis() - nearTrackers[a].lastTime > Config.rememberStationTime * 60 * 1000)) {
+                nearTrackers[a].callsign    = emptyString;
                 nearTrackers[a].distance    = 0.0;
                 nearTrackers[a].course      = 0;
                 nearTrackers[a].lastTime    = 0;
@@ -94,7 +94,7 @@ namespace STATION_Utils {
 
         for (int b = 0; b < 4 - 1; b++) {
             for (int c = 0; c < 4 - b - 1; c++) {
-                if (nearTrackers[c].callsign == "") {       // get "" nearTrackers[] at the end
+                if (nearTrackers[c].callsign == emptyString) {       // get emptyString nearTrackers[] at the end
                     nearTracker temp = nearTrackers[c];
                     nearTrackers[c] = nearTrackers[c + 1];
                     nearTrackers[c + 1] = temp;
@@ -128,7 +128,7 @@ namespace STATION_Utils {
     
         if (!callsignInNearTrackers) {                      // callsign not in nearTrackers[]
             for (int b = 0; b < 4; b++) {                   // if nearTrackers[] is available
-                if (nearTrackers[b].callsign == "") {
+                if (nearTrackers[b].callsign == emptyString) {
                     shouldSortbyDistance        = true;
                     nearTrackers[b].callsign    = callsign;
                     nearTrackers[b].distance    = distance;
@@ -154,10 +154,10 @@ namespace STATION_Utils {
             }
         }
 
-        if (shouldSortbyDistance) {                         // sorts by distance (only nearTrackers[] that are not "")
+        if (shouldSortbyDistance) {                         // sorts by distance (only nearTrackers[] that are not emptyString)
             for (int f = 0; f < 4 - 1; f++) {
                 for (int g = 0; g < 4 - f - 1; g++) {
-                    if (nearTrackers[g].callsign != "" && nearTrackers[g + 1].callsign != "") {
+                    if (nearTrackers[g].callsign != emptyString && nearTrackers[g + 1].callsign != emptyString) {
                         if (nearTrackers[g].distance > nearTrackers[g + 1].distance) {
                             nearTracker temp = nearTrackers[g];
                             nearTrackers[g] = nearTrackers[g + 1];
@@ -187,7 +187,7 @@ namespace STATION_Utils {
             }
             String basePacket = currentBeacon->callsign;
             basePacket += ">APLRT1";
-            if (Config.path != "") {
+            if (Config.path != emptyString) {
                 basePacket += ",";
                 basePacket += Config.path;
             }
@@ -221,7 +221,7 @@ namespace STATION_Utils {
             packet += (wxModuleType != 0) ? WX_Utils::readDataSensor(0) : ".../...g...t...";
         } else {
             String path = Config.path;
-            if (gps.speed.kmph() > 200 || gps.altitude.meters() > 9000) path = ""; // avoid plane speed and altitude
+            if (gps.speed.kmph() > 200 || gps.altitude.meters() > 9000) path = emptyString; // avoid plane speed and altitude
             if (miceActive) {
                 packet = APRSPacketLib::generateMiceGPSBeaconPacket(currentBeacon->micE, currentBeacon->callsign, currentBeacon->symbol, currentBeacon->overlay, path, gps.location.lat(), gps.location.lng(), gps.course.deg(), gps.speed.knots(), gps.altitude.meters());
             } else {
@@ -272,16 +272,16 @@ namespace STATION_Utils {
         if (shouldSleepLowVoltage) {
             packet += " **LowVoltagePowerOff**";
         } else {
-            if (comment != "" || (Config.battery.sendVoltage && Config.battery.voltageAsTelemetry)) {
+            if (comment != emptyString || (Config.battery.sendVoltage && Config.battery.voltageAsTelemetry)) {
                 updateCounter++;
                 if (updateCounter >= sendCommentAfterXBeacons) {
-                    if (comment != "") packet += comment;
+                    if (comment != emptyString) packet += comment;
                     if (Config.battery.sendVoltage && Config.battery.voltageAsTelemetry) packet += BATTERY_Utils::generateEncodedTelemetry(batteryVoltage.toFloat());
                     updateCounter = 0;
                 }
             }
         }
-        displayShow("<<< TX >>>", "", packet, 100);
+        displayShow("<<< TX >>>", emptyString, packet, 100);
         LoRa_Utils::sendNewPacket(packet);
 
         if (Config.bluetooth.useBLE) BLE_Utils::sendToPhone(packet);   // send Tx packets to Phone too

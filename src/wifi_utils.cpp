@@ -21,7 +21,7 @@ namespace WIFI_Utils {
 
     void checkIfWiFiAP() {
         if (Config.wifiAP.active || Config.beacons[0].callsign == "NOCALL-7"){
-            displayShow(" LoRa APRS", "    ** WEB-CONF **","", "WiFiAP:LoRaTracker-AP", "IP    :   192.168.4.1","");
+            displayShow(" LoRa APRS", "    ** WEB-CONF **",emptyString, "WiFiAP:LoRaTracker-AP", "IP    :   192.168.4.1",emptyString);
             logger.log(logging::LoggerLevel::LOGGER_LEVEL_WARN, "Main", "WebConfiguration Started!");
             startAutoAP();
             WEB_Utils::setup();
@@ -33,7 +33,7 @@ namespace WIFI_Utils {
                         noClientsTime = millis();
                     } else if ((millis() - noClientsTime) > 2 * 60 * 1000) {
                         logger.log(logging::LoggerLevel::LOGGER_LEVEL_WARN, "Main", "WebConfiguration Stopped!");
-                        displayShow("", "", "  STOPPING WiFi AP", 2000);
+                        displayShow(emptyString, emptyString, "  STOPPING WiFi AP", 2000);
                         Config.wifiAP.active = false;
                         Config.writeFile();
                         WiFi.softAPdisconnect(true);
