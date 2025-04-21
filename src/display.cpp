@@ -536,11 +536,11 @@ void displayShow(const String& header, const String& line1, const String& line2,
 void startupScreen(uint8_t index, const String& version) {
     String workingFreq = "    LoRa Freq [";
     switch (index) {
-        case 0: workingFreq += "Eu]"; break;
+        case 0: workingFreq += "EU]"; break;
         case 1: workingFreq += "PL]"; break;
         case 2: workingFreq += "UK]"; break;
     }
-    displayShow(" LoRa APRS", "  (TRACKER)", workingFreq, emptyString, emptyString, " CA2RXU mod SQ9PD " + version, 4000);
+    displayShow(" LoRa APRS", "  (TRACKER)", workingFreq, emptyString, " CA2RXU fork by SQ9PD", version, 4000);
     logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Main", "RichonGuzman (CA2RXU) --> LoRa APRS Tracker/Station");
     logger.log(logging::LoggerLevel::LOGGER_LEVEL_INFO, "Main", "Version: %s", version);
 }

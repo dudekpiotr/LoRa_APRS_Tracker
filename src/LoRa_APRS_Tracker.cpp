@@ -25,6 +25,7 @@ ____________________________________________________________________*/
 #include <Arduino.h>
 #include <logger.h>
 #include <WiFi.h>
+#include "ina219_utils.h"
 #include "smartbeacon_utils.h"
 #include "bluetooth_utils.h"
 #include "keyboard_utils.h"
@@ -113,7 +114,8 @@ void setup() {
     #ifndef DEBUG
         logger.setDebugLevel(logging::LoggerLevel::LOGGER_LEVEL_INFO);
     #endif
-
+    
+    INA219_utils::init();
     POWER_Utils::setup();
     displaySetup();
     POWER_Utils::externalPinSetup();
@@ -240,8 +242,12 @@ void loop() {
             if (!sendUpdate) GPS_Utils::calculateHeadingDelta(currentSpeed);
             STATION_Utils::checkStandingUpdateTime();
         }
+
         SMARTBEACON_Utils::checkFixedBeaconTime();
-        if (sendUpdate && gps_loc_update) STATION_Utils::sendBeacon(0);
+        if (sendUpdate && gps_loc_update) {
+            STATION_Utils::sendBeacon(0);
+        }
+
         if (gps_time_update) SMARTBEACON_Utils::checkInterval(currentSpeed);
 
         if (millis() - refreshDisplayTime >= 1000 || gps_time_update) {

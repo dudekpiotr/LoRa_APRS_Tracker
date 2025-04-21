@@ -12,6 +12,7 @@
 #include "wx_utils.h"
 #include "display.h"
 #include "logger.h"
+#include "ina219_utils.h"
 
 extern Configuration        Config;
 extern Beacon               *currentBeacon;
@@ -62,6 +63,8 @@ struct nearTracker {
 
 nearTracker nearTrackers[4];
 
+const String TXT_TX = "<<< TX >>>";
+const String TXT_TELEMETRY_PACKET = "Telemetry Packet:";
 
 namespace STATION_Utils {
 
@@ -196,20 +199,20 @@ namespace STATION_Utils {
             basePacket += ":";
 
             String tempPacket = basePacket;
-            tempPacket += "EQNS.0,0.01,0";
-            displayShow("<<< TX >>>", "Telemetry Packet:", "Equation Coefficients",100);
+            tempPacket += "EQNS.0,0.01,0, 0,0.01,0, 0,0.01,0, 0,0.01,0";
+            displayShow(TXT_TX, TXT_TELEMETRY_PACKET, "Equation Coefficients",100);
             LoRa_Utils::sendNewPacket(tempPacket);
             delay(3000);
 
             tempPacket = basePacket;
-            tempPacket += "UNIT.VDC";
-            displayShow("<<< TX >>>", "Telemetry Packet:", "Unit/Label",100);
+            tempPacket += "UNIT.VDC,VDC,C,%";
+            displayShow(TXT_TX, TXT_TELEMETRY_PACKET, "Unit/Label",100);
             LoRa_Utils::sendNewPacket(tempPacket);
             delay(3000);
 
             tempPacket = basePacket;
-            tempPacket += "PARM.V_Batt";
-            displayShow("<<< TX >>>", "Telemetry Packet:", "Parameter Name",100);
+            tempPacket += "PARM.V_Batt,V_ACC,TEMP,HUM";
+            displayShow(TXT_TX, TXT_TELEMETRY_PACKET, "Parameter Name",100);
             LoRa_Utils::sendNewPacket(tempPacket);
             delay(3000);
             sendStartTelemetry = false;
@@ -231,7 +234,8 @@ namespace STATION_Utils {
         String comment;
         int sendCommentAfterXBeacons;
         if (winlinkCommentState || Config.battery.sendVoltageAlways) {
-            if (winlinkCommentState) comment = " winlink";
+            if (winlinkCommentState) 
+                comment = " winlink";
             sendCommentAfterXBeacons = 1;
         } else {
             comment = currentBeacon->comment;
@@ -275,13 +279,16 @@ namespace STATION_Utils {
             if (comment != emptyString || (Config.battery.sendVoltage && Config.battery.voltageAsTelemetry)) {
                 updateCounter++;
                 if (updateCounter >= sendCommentAfterXBeacons) {
-                    if (comment != emptyString) packet += comment;
-                    if (Config.battery.sendVoltage && Config.battery.voltageAsTelemetry) packet += BATTERY_Utils::generateEncodedTelemetry(batteryVoltage.toFloat());
+                    if (comment != emptyString) 
+                        packet += comment;
+                    if (Config.battery.sendVoltage && Config.battery.voltageAsTelemetry) {
+                        packet += BATTERY_Utils::generateEncodedTelemetry(batteryVoltage.toFloat(), INA219_utils::getLoadVoltage(), INA219_utils::getTemperature(), INA219_utils::getHumidity());
+                    }
                     updateCounter = 0;
                 }
             }
         }
-        displayShow("<<< TX >>>", emptyString, packet, 100);
+        displayShow(TXT_TX, emptyString, packet, 100);
         LoRa_Utils::sendNewPacket(packet);
 
         if (Config.bluetooth.useBLE) BLE_Utils::sendToPhone(packet);   // send Tx packets to Phone too

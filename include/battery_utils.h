@@ -6,7 +6,7 @@
 
 namespace BATTERY_Utils {
 
-    String  generateEncodedTelemetry(float voltage);
+    String  generateEncodedTelemetry(float batVoltage, float accVoltage, float temp, float hum);
     String  getPercentVoltageBattery(float voltage);
     void    checkVoltageWithoutGPSFix();
     

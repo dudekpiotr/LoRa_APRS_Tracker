@@ -39,14 +39,17 @@ namespace BATTERY_Utils {
         return encodedBytes;
     }
 
-    String generateEncodedTelemetry(float voltage) {
+    String generateEncodedTelemetry(float voltageBatt, float voltageAcc, float temp, float hum) {
         String telemetry = "|";
         telemetry += generateEncodedTelemetryBytes(telemetryCounter, true, 0);
         telemetryCounter++;
         if (telemetryCounter == 1000) {
             telemetryCounter = 0;
         }
-        telemetry += generateEncodedTelemetryBytes(voltage, false, 0);
+        telemetry += generateEncodedTelemetryBytes(voltageBatt, false, 0);
+        telemetry += generateEncodedTelemetryBytes(voltageAcc, false, 0);
+        telemetry += generateEncodedTelemetryBytes(temp, false, 0);
+        telemetry += generateEncodedTelemetryBytes(hum, false, 0);
         telemetry += "|";
         return telemetry;
     }
